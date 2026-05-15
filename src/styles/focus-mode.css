@@ -1,0 +1,160 @@
+.focus-page {
+  background: radial-gradient(circle at top left, rgba(56, 189, 248, 0.14), transparent 32%),
+    radial-gradient(circle at right, rgba(59, 130, 246, 0.16), transparent 22%),
+    radial-gradient(circle at bottom left, rgba(16, 185, 129, 0.12), transparent 26%),
+    linear-gradient(180deg, rgba(15, 23, 42, 1) 0%, rgba(15, 23, 42, 0.96) 100%);
+}
+
+.focus-page--work {
+  background: radial-gradient(circle at top left, rgba(56, 189, 248, 0.16), transparent 30%),
+    radial-gradient(circle at 85% 15%, rgba(59, 130, 246, 0.14), transparent 22%),
+    linear-gradient(180deg, rgba(10, 25, 60, 1), rgba(15, 23, 42, 0.96));
+}
+
+.focus-page--break {
+  background: radial-gradient(circle at top left, rgba(34, 197, 94, 0.16), transparent 28%),
+    radial-gradient(circle at 85% 15%, rgba(34, 211, 238, 0.12), transparent 22%),
+    linear-gradient(180deg, rgba(6, 34, 42, 1), rgba(8, 37, 43, 0.98));
+}
+
+.focus-wave {
+  position: absolute;
+  pointer-events: none;
+  border-radius: 50%;
+  opacity: 0.35;
+  filter: blur(120px);
+  transform: translate3d(0, 0, 0);
+  transition: opacity 0.4s ease;
+}
+
+.focus-wave--work {
+  top: -100px;
+  left: -80px;
+  width: 420px;
+  height: 420px;
+  background: radial-gradient(circle, rgba(59, 130, 246, 0.45), transparent 55%);
+  animation: floatWave 18s ease-in-out infinite;
+}
+
+.focus-wave--break {
+  bottom: -120px;
+  right: -120px;
+  width: 520px;
+  height: 520px;
+  background: radial-gradient(circle, rgba(16, 185, 129, 0.28), transparent 50%);
+  animation: floatWave 14s ease-in-out infinite reverse;
+}
+
+.focus-wave--hidden {
+  opacity: 0;
+}
+
+.focus-mode-animation {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 0;
+}
+
+.focus-mode-animation--work {
+  background: radial-gradient(circle at 20% 10%, rgba(34, 211, 238, 0.18), transparent 22%),
+    radial-gradient(circle at 80% 20%, rgba(14, 165, 233, 0.14), transparent 24%);
+}
+
+.focus-mode-animation--break {
+  background: radial-gradient(circle at 60% 10%, rgba(52, 211, 153, 0.16), transparent 22%),
+    radial-gradient(circle at 25% 90%, rgba(16, 185, 129, 0.12), transparent 24%);
+}
+
+.focus-mode-dot,
+.focus-mode-dot--secondary {
+  position: absolute;
+  border-radius: 9999px;
+  opacity: 0.35;
+}
+
+.focus-mode-dot {
+  width: 140px;
+  height: 140px;
+  top: 12%;
+  left: 8%;
+  background: rgba(56, 189, 248, 0.22);
+  animation: slowPulse 14s ease-in-out infinite;
+}
+
+.focus-mode-dot--secondary {
+  width: 180px;
+  height: 180px;
+  bottom: 10%;
+  right: 6%;
+  background: rgba(59, 130, 246, 0.16);
+  animation: slowPulse 18s ease-in-out infinite;
+}
+
+.focus-mode-animation--break .focus-mode-dot {
+  background: rgba(16, 185, 129, 0.22);
+}
+
+.focus-mode-animation--break .focus-mode-dot--secondary {
+  background: rgba(52, 211, 153, 0.18);
+}
+
+@keyframes slowPulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.08);
+  }
+}
+
+.focus-timer-card {
+  min-height: 300px;
+  border-radius: 2rem;
+  background: rgba(15, 23, 42, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  display: grid;
+  place-items: center;
+}
+
+.focus-timer-card--warning {
+  box-shadow: 0 0 0 8px rgba(249, 115, 22, 0.08), 0 0 0 18px rgba(249, 115, 22, 0.04);
+}
+
+.focus-timer-ring {
+  width: min(360px, 100%);
+  height: min(360px, 100%);
+  aspect-ratio: 1 / 1;
+  border-radius: 50%;
+  border: 1px solid rgba(59, 130, 246, 0.24);
+  background: linear-gradient(180deg, rgba(59, 130, 246, 0.08), rgba(15, 23, 42, 0.5));
+  display: grid;
+  place-items: center;
+  position: relative;
+}
+
+.focus-timer-ring::before {
+  content: "";
+  position: absolute;
+  inset: 14px;
+  border-radius: 50%;
+  background: rgba(15, 23, 42, 0.75);
+}
+
+.focus-timer-ring__label {
+  position: relative;
+  z-index: 1;
+  color: #e2e8f0;
+  font-size: clamp(2.5rem, 4vw, 4rem);
+  font-weight: 800;
+}
+
+@keyframes floatWave {
+  0%, 100% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(24px) scale(1.04);
+  }
+}

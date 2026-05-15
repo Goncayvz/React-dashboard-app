@@ -1,0 +1,43 @@
+.dashboard-bg{
+  position:absolute;
+  top:0;
+  right:0;
+  bottom:0;
+  width:40%;
+  max-width:520px;
+  min-width:320px;
+  z-index:0;
+  pointer-events:none;
+  overflow:hidden;
+}
+
+/* Lottie wrapper'ın kendi içine oturması için */
+.dashboard-bg > *{
+  width:100% !important;
+  height:100% !important;
+}
+
+/* Animasyonu kartların üstüne taşımadan daha “arka planda” tut */
+.dashboard-bg {
+  filter: saturate(1.05) brightness(0.95);
+  opacity: 0.55;
+}
+
+/* Grid alanı stacking helper */
+.dashboard-bg-content{
+  width:100%;
+  height:100%;
+  position:relative;
+}
+
+/* Ensure cards render above the animation */
+.relative > .glass-card,
+.relative > .glass-card *{
+  position: relative;
+  z-index: 1;
+}
+
+
+
+
+

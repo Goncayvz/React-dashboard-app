@@ -59,18 +59,20 @@ function Tasks() {
   }
 
   return (
-    <div className="p-8 grid grid-cols-3 gap-6">
-      {tasks.map((task) => (
-        <TaskCard
-          key={task.id}
-          title={task.title}
-          description={task.description}
-          status={task.status}
-          deadline={task.deadline}
-          onDelete={() => deleteTask(task.id)}
-          onToggle={() => toggleStatus(task.id)}
-        />
-      ))}
+    <div className="p-8 relative overflow-hidden">
+      <div className="relative z-10 grid grid-cols-3 gap-6">
+        {tasks.map((task) => (
+          <TaskCard
+            key={task.id}
+            title={task.title}
+            description={task.description}
+            status={task.status}
+            deadline={task.deadline}
+            onDelete={() => deleteTask(task.id)}
+            onToggle={() => toggleStatus(task.id)}
+          />
+        ))}
+      </div>
     </div>
   )
 }

@@ -12,8 +12,11 @@ export function UserProvider({ children }) {
           email: "user@example.com",
           phone: "+90 XXX XXXX",
           bio: "Ben bir görev yöneticisiyim",
-          avatar: "👤",
-          birthDate: "2000-01-01"
+          avatar: "🧑",
+          birthDate: "2000-01-01",
+          jobTitle: "Product Designer",
+          location: "Istanbul, TR",
+          website: "https://example.com"
         }
   })
 

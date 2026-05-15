@@ -1,6 +1,6 @@
 function TaskCard({ title, description, status, deadline, onDelete, onToggle,onEdit }){
     return(
-        <div className="bg-zinc-900 p-5 rounded-2xl border border-zinc-800">
+        <div className="glass-card p-5 rounded-3xl border border-white/10">
             
             <h3 className="text-xl font-semibold mb-2">
                 {title}
