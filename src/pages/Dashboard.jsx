@@ -44,7 +44,7 @@ const [editDesc, setEditDesc] = useState("")
         
         // Rozetleri kontrol et
         const completedCount = tasks.filter(t => t.status === "Completed").length
-        const newBadges = checkAndAwardBadges(completedCount)
+        const newBadges = checkAndAwardBadges(completedCount, tasks.length, { tasks })
 
         // Yeni rozetler kazanıldıysa bildirim göster
         if (newBadges.length > 0) {
@@ -52,7 +52,7 @@ const [editDesc, setEditDesc] = useState("")
                 addNotification(`🎉 Yeni rozet: ${badge.name}!`, "success", 4000)
             })
         }
-    }, [tasks])
+    }, [tasks, checkAndAwardBadges, addNotification])
 
     const filteredTasks = tasks.filter(task => {
         if (filter === "all") return true

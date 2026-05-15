@@ -9,7 +9,7 @@ const BADGES = [
     description: "1 görevi tamamla",
     icon: "🎯",
     threshold: 1,
-    color: "bronze"
+    category: "completions"
   },
   {
     id: 2,
@@ -17,7 +17,7 @@ const BADGES = [
     description: "5 görevi tamamla",
     icon: "🥉",
     threshold: 5,
-    color: "bronze"
+    category: "completions"
   },
   {
     id: 3,
@@ -25,7 +25,7 @@ const BADGES = [
     description: "10 görevi tamamla",
     icon: "🥈",
     threshold: 10,
-    color: "silver"
+    category: "completions"
   },
   {
     id: 4,
@@ -33,7 +33,7 @@ const BADGES = [
     description: "20 görevi tamamla",
     icon: "🥇",
     threshold: 20,
-    color: "gold"
+    category: "completions"
   },
   {
     id: 5,
@@ -41,23 +41,127 @@ const BADGES = [
     description: "50 görevi tamamla",
     icon: "💎",
     threshold: 50,
-    color: "diamond"
+    category: "completions"
   },
   {
     id: 6,
-    name: "Süper Verimli",
-    description: "1 gün içinde 3 görevi tamamla",
+    name: "Hız Ustası",
+    description: "2 görevi tamamla",
     icon: "⚡",
-    threshold: 3,
-    color: "lightning"
+    threshold: 2,
+    category: "speed"
   },
   {
     id: 7,
-    name: "Hız Ustası",
-    description: "10 dakika içinde 2 görevi tamamla",
+    name: "Hız Şampiyonu",
+    description: "5 görevi tamamla",
     icon: "🚀",
-    threshold: 2,
-    color: "rocket"
+    threshold: 5,
+    category: "speed"
+  },
+  {
+    id: 8,
+    name: "Temizlik Ustası",
+    description: "Tüm görevleri tamamla",
+    icon: "✨",
+    threshold: 100,
+    category: "cleanup"
+  },
+  {
+    id: 9,
+    name: "Tasarımcı",
+    description: "UI Design System görevini tamamla",
+    icon: "🎨",
+    threshold: 1,
+    category: "specific"
+  },
+  {
+    id: 10,
+    name: "Güvenlik Uzmanı",
+    description: "Authentication görevini tamamla",
+    icon: "🔐",
+    threshold: 1,
+    category: "specific"
+  },
+  {
+    id: 11,
+    name: "Verimli Gün",
+    description: "3 görevi aynı günde tamamla",
+    icon: "☀️",
+    threshold: 3,
+    category: "daily"
+  },
+  {
+    id: 12,
+    name: "İş Diyarı",
+    description: "10 görev ekle",
+    icon: "📋",
+    threshold: 10,
+    category: "created"
+  },
+  {
+    id: 13,
+    name: "Ekibin Kahramanı",
+    description: "5 gün üst üste aktif ol",
+    icon: "🦸",
+    threshold: 5,
+    category: "streak"
+  },
+  {
+    id: 14,
+    name: "Mükemmeliyetçi",
+    description: "100% görev başarı oranı",
+    icon: "💯",
+    threshold: 100,
+    category: "perfect"
+  },
+  {
+    id: 15,
+    name: "Süper Verimliliği",
+    description: "30 görev tamamla",
+    icon: "🌟",
+    threshold: 30,
+    category: "completions"
+  },
+  {
+    id: 16,
+    name: "Lider",
+    description: "100 görev tamamla",
+    icon: "👑",
+    threshold: 100,
+    category: "completions"
+  },
+  {
+    id: 17,
+    name: "Zaman Yöneticisi",
+    description: "Hiç gecikmiş görev yapma",
+    icon: "⏰",
+    threshold: 1,
+    category: "ontime"
+  },
+  {
+    id: 18,
+    name: "Dikkat Meraklısı",
+    description: "Çok detaylı görev açıklaması ekle",
+    icon: "🔍",
+    threshold: 1,
+    category: "detail"
+  },
+  {
+    id: 19,
+    name: "Sosyal Kelebek",
+    description: "Yeni profil bilgileri ekle",
+    icon: "🦋",
+    threshold: 1,
+    category: "social"
+  },
+  {
+    id: 20,
+    name: "Başlangıç Ustası",
+    description: "Profil ve ayarlarını tamamla",
+    icon: "🚀",
+    threshold: 1,
+    category: "setup"
   }
 ]
 
@@ -79,13 +183,43 @@ export function BadgeProvider({ children }) {
     return false
   }
 
-  function checkAndAwardBadges(completedCount) {
-    const newBadges = BADGES
-      .filter((badge) => completedCount >= badge.threshold && !earnedBadges.includes(badge.id))
-      .map((badge) => {
+  function checkAndAwardBadges(completedCount, totalCount = 0, taskData = {}) {
+    const newBadges = []
+    
+    // Tamamlama sayısına göre
+    BADGES
+      .filter((badge) => badge.category === "completions" && completedCount >= badge.threshold && !earnedBadges.includes(badge.id))
+      .forEach((badge) => {
         addBadge(badge.id)
-        return badge
+        newBadges.push(badge)
       })
+
+    // Hız rozetleri (tamamlama sayısına göre)
+    BADGES
+      .filter((badge) => badge.category === "speed" && completedCount >= badge.threshold && !earnedBadges.includes(badge.id))
+      .forEach((badge) => {
+        addBadge(badge.id)
+        newBadges.push(badge)
+      })
+
+    // Mükemmellik (100% tamamlama oranı)
+    if (totalCount > 0 && completedCount === totalCount && totalCount >= 5) {
+      const perfectBadge = BADGES.find(b => b.id === 14)
+      if (perfectBadge && !earnedBadges.includes(14)) {
+        addBadge(14)
+        newBadges.push(perfectBadge)
+      }
+    }
+
+    // İş Diyarı (10+ görev oluşturulmuş)
+    if (totalCount >= 10) {
+      const creatorBadge = BADGES.find(b => b.id === 12)
+      if (creatorBadge && !earnedBadges.includes(12)) {
+        addBadge(12)
+        newBadges.push(creatorBadge)
+      }
+    }
+
     return newBadges
   }
 
