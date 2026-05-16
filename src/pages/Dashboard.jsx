@@ -119,17 +119,17 @@ function Dashboard() {
   }
 
   return (
-    <div className="flex-1 p-8 bg-transparent relative overflow-hidden">
+    <div className="flex-1 px-4 py-6 sm:p-8 bg-transparent relative overflow-hidden">
       <div className="relative z-10">
         <Header />
 
         <div className="absolute inset-0 -z-10 bg-transparent" aria-hidden="true" />
 
 
-        <div className="mb-8 glass-card p-6 rounded-3xl border border-white/10">
+        <div className="mb-8 glass-card p-5 sm:p-6 rounded-3xl border border-white/10">
           <h3 className="text-xl font-semibold mb-4">Add New Task</h3>
 
-          <div className="flex gap-4">
+          <div className="flex flex-col sm:flex-row gap-4">
             <input
               type="text"
               placeholder="Task Title"
@@ -146,15 +146,18 @@ function Dashboard() {
               className="flex-1 px-4 py-2 bg-zinc-800 border border-zinc-700 rounded-lg text-white"
             />
 
-            <button onClick={handleAddTask} className="bg-blue-500 px-6 py-2 rounded-lg">
+            <button
+              onClick={handleAddTask}
+              className="bg-blue-500 px-6 py-2 rounded-lg w-full sm:w-auto"
+            >
               Add Task
             </button>
           </div>
         </div>
 
-        <div className="mb-8 glass-card p-6 rounded-3xl border border-white/10">
+        <div className="mb-8 glass-card p-5 sm:p-6 rounded-3xl border border-white/10">
           <h3 className="text-xl font-semibold mb-4">Filter Tasks</h3>
-          <div className="flex gap-4">
+          <div className="flex flex-wrap gap-3">
             <button
               onClick={() => setFilter("all")}
               className={`px-4 py-2 rounded-lg ${filter === "all" ? "bg-blue-500" : "bg-zinc-700"}`}
@@ -178,7 +181,7 @@ function Dashboard() {
           </div>
         </div>
 
-        <div className="grid grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
           {filteredTasks.map((task) => (
             <TaskCard
               key={task.id}
@@ -195,7 +198,7 @@ function Dashboard() {
 
         {isEditing && (
           <div className="fixed inset-0 bg-black/50 flex items-center justify-center">
-            <div className="bg-zinc-900 p-6 rounded-lg w-[400px]">
+            <div className="bg-zinc-900 p-6 rounded-lg w-[92vw] max-w-md">
               <h2 className="text-xl mb-4">Edit Task</h2>
 
               <input

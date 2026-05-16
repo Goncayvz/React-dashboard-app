@@ -28,7 +28,7 @@ function Badges() {
   }
 
   return (
-    <div className="p-8">
+    <div className="px-4 py-6 sm:p-8">
       <div className="mb-8">
         <h1 className="text-4xl font-bold mb-2">🏆 Rozetler</h1>
         <p className="text-zinc-400">Kazanılan: <span className="text-yellow-400 font-bold">{earnedBadges.length}</span> / {BADGES.length}</p>
@@ -103,7 +103,7 @@ function Badges() {
       </div>
 
       {/* İstatistikler */}
-      <div className="mt-12 grid grid-cols-2 gap-4">
+      <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="bg-zinc-900 p-6 rounded-lg border border-zinc-800">
           <h3 className="text-zinc-400 mb-2">Toplam Rozetler</h3>
           <p className="text-4xl font-bold text-yellow-400">{BADGES.length}</p>

@@ -19,24 +19,27 @@ function TaskCard({ title, description, status, deadline, onDelete, onToggle,onE
                     {deadline}
                 </span>
             </div>
-            <button
-                onClick={onToggle}
-                className="mt-4 mr-2 bg-green-500 hover:bg-green-600 px-4 py-2 rounded-lg"
-            >
-            Toggle Status
-            </button>
-            <button
-                onClick={onDelete}
-                className="mt-4 bg-red-500 hover:bg-red-600 px-4 py-2 rounded-lg"
-            >
-                Delete
-            </button>
-            <button
-                onClick={onEdit}
-                className="mt-4 mr-2 bg-yellow-500 hover:bg-yellow-600 px-4 py-2 rounded-lg"
-            >
-                 Edit  
-            </button>
+
+            <div className="mt-4 flex flex-wrap gap-2">
+                <button
+                    onClick={onToggle}
+                    className="bg-green-500 hover:bg-green-600 px-4 py-2 rounded-lg flex-1 sm:flex-none"
+                >
+                Toggle Status
+                </button>
+                <button
+                    onClick={onEdit}
+                    className="bg-yellow-500 hover:bg-yellow-600 px-4 py-2 rounded-lg flex-1 sm:flex-none"
+                >
+                     Edit  
+                </button>
+                <button
+                    onClick={onDelete}
+                    className="bg-red-500 hover:bg-red-600 px-4 py-2 rounded-lg flex-1 sm:flex-none"
+                >
+                    Delete
+                </button>
+            </div>
         </div>
     )
 }

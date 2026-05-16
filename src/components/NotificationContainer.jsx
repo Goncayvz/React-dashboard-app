@@ -4,11 +4,11 @@ function NotificationContainer() {
   const { notifications } = useNotification()
 
   return (
-    <div className="fixed top-4 right-4 z-50 space-y-2 pointer-events-none">
+    <div className="fixed top-4 left-4 right-4 sm:left-auto sm:right-4 z-50 space-y-2 pointer-events-none">
       {notifications.map((notification) => (
         <div
           key={notification.id}
-          className={`p-4 rounded-lg shadow-lg animate-slideIn pointer-events-auto ${
+          className={`p-4 rounded-lg shadow-lg animate-slideIn pointer-events-auto max-w-md sm:max-w-sm ml-auto ${
             notification.type === "success"
               ? "bg-green-500 text-white"
               : notification.type === "error"

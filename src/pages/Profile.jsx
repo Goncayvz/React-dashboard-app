@@ -40,10 +40,7 @@ function Profile() {
     "email",
     "phone",
     "bio",
-    "birthDate",
     "jobTitle",
-    "location",
-    "website",
     "avatar"
   ]
 
@@ -84,11 +81,11 @@ function Profile() {
   }
 
   return (
-    <div className="p-8 max-w-6xl mx-auto">
+    <div className="px-4 py-6 sm:p-8 max-w-6xl mx-auto">
       <h1 className="text-3xl font-bold mb-8">Kullanıcı Profili</h1>
 
       <div className="grid gap-6 lg:grid-cols-[1.4fr_0.9fr]">
-        <div className="glass-card p-8 rounded-3xl border border-white/10">
+        <div className="glass-card p-5 sm:p-8 rounded-3xl border border-white/10">
           <div className="flex flex-col gap-6 lg:flex-row lg:items-center">
             {user.avatar?.startsWith("data:image") ? (
               <img
@@ -144,7 +141,7 @@ function Profile() {
           </div>
         </div>
 
-        <div className="glass-card p-8 rounded-3xl border border-white/10">
+        <div className="glass-card p-5 sm:p-8 rounded-3xl border border-white/10">
           {!isEditing ? (
             <>
               <h2 className="text-2xl font-bold mb-6">Profil Detayları</h2>
@@ -158,21 +155,6 @@ function Profile() {
                 <div className="grid gap-2">
                   <span className="text-zinc-400 text-sm">Telefon</span>
                   <p className="text-white">{user.phone}</p>
-                </div>
-
-                <div className="grid gap-2">
-                  <span className="text-zinc-400 text-sm">Konum</span>
-                  <p className="text-white">{user.location}</p>
-                </div>
-
-                <div className="grid gap-2">
-                  <span className="text-zinc-400 text-sm">Web Sitesi</span>
-                  <p className="text-blue-300">{user.website}</p>
-                </div>
-
-                <div className="grid gap-2">
-                  <span className="text-zinc-400 text-sm">Doğum Tarihi</span>
-                  <p className="text-white">{user.birthDate}</p>
                 </div>
               </div>
 
@@ -233,28 +215,6 @@ function Profile() {
                 </div>
 
                 <div>
-                  <label className="block text-zinc-400 text-sm mb-2">Konum</label>
-                  <input
-                    type="text"
-                    name="location"
-                    value={formData.location}
-                    onChange={handleChange}
-                    className="w-full p-3 bg-zinc-950 rounded-3xl border border-white/10"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-zinc-400 text-sm mb-2">Web Sitesi</label>
-                  <input
-                    type="url"
-                    name="website"
-                    value={formData.website}
-                    onChange={handleChange}
-                    className="w-full p-3 bg-zinc-950 rounded-3xl border border-white/10"
-                  />
-                </div>
-
-                <div>
                   <label className="block text-zinc-400 text-sm mb-2">Bio</label>
                   <textarea
                     name="bio"
@@ -302,16 +262,6 @@ function Profile() {
                   )}
                 </div>
 
-                <div>
-                  <label className="block text-zinc-400 text-sm mb-2">Doğum Tarihi</label>
-                  <input
-                    type="date"
-                    name="birthDate"
-                    value={formData.birthDate}
-                    onChange={handleChange}
-                    className="w-full p-3 bg-zinc-950 rounded-3xl border border-white/10"
-                  />
-                </div>
               </div>
 
               <div className="flex gap-4 mt-8">

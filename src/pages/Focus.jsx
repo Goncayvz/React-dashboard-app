@@ -20,7 +20,7 @@ const getYoutubeEmbedUrl = (url) => {
 
     if (!videoId) return ""
 
-    return `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=0&loop=1&playlist=${videoId}&controls=0&enablejsapi=1`
+    return `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=0&loop=1&playlist=${videoId}&controls=1&modestbranding=1&enablejsapi=1`
   } catch {
     return ""
   }
@@ -32,10 +32,29 @@ const PRESETS = {
   extended: { work: 50, shortBreak: 10, longBreak: 20 }
 }
 
+const WORK_MOTTOS = [
+  "Bir adım daha. Devam.",
+  "Odak = özgürlük.",
+  "Bugün küçük, yarın büyük.",
+  "Sadece 5 dakika daha.",
+  "Dikkatini seç, sonucu yaşa."
+]
+
+const BREAK_MOTTOS = [
+  "Nefes al, gevşe.",
+  "Su içmeyi unutma.",
+  "Omuzlarını rahat bırak.",
+  "Gözlerini dinlendir.",
+  "Harika gidiyorsun."
+]
+
 const SOUND_TYPES = {
   warning: { label: "Uyarı", key: "warning" },
   work: { label: "Çalışma", key: "work" },
   break: { label: "Mola", key: "break" },
+  chime: { label: "Chime", key: "chime" },
+  soft: { label: "Yumuşak", key: "soft" },
+  digital: { label: "Dijital", key: "digital" },
   none: { label: "Sessiz", key: "none" }
 }
 
@@ -101,6 +120,7 @@ const defaultSettings = {
   soundType: "break",
   ambientSound: "rain",
   ambientVolume: 0.3,
+  bgSoundOn: true,
 
   // YouTube (arka plan sesi) - kullanıcıdan gelen link
   youtubeUrl: ""
@@ -125,6 +145,7 @@ function Focus() {
   const [ambientSound, setAmbientSound] = useState(defaultSettings.ambientSound)
   const [ambientVolume, setAmbientVolume] = useState(defaultSettings.ambientVolume)
   const [soundOn, setSoundOn] = useState(true)
+  const [bgSoundOn, setBgSoundOn] = useState(defaultSettings.bgSoundOn)
 
   // User-provided YouTube link
   const [youtubeUrl, setYoutubeUrl] = useState(defaultSettings.youtubeUrl)
@@ -135,6 +156,8 @@ function Focus() {
 
   const audioContextRef = useRef(null)
   const ambientAudioRef = useRef(null)
+  const youtubePlayerRef = useRef(null)
+  const youtubeVolumeRef = useRef(ambientVolume)
 
   useEffect(() => {
     const saved = localStorage.getItem("focus-settings")
@@ -151,6 +174,8 @@ function Focus() {
         setSoundType(parsed.soundType || defaultSettings.soundType)
         setAmbientSound(parsed.ambientSound || defaultSettings.ambientSound)
         setAmbientVolume(parsed.ambientVolume || defaultSettings.ambientVolume)
+        setBgSoundOn(typeof parsed.bgSoundOn === "boolean" ? parsed.bgSoundOn : defaultSettings.bgSoundOn)
+        setYoutubeUrl(parsed.youtubeUrl || defaultSettings.youtubeUrl)
         setSecondsLeft((parsed.workMinutes || defaultSettings.workMinutes) * 60)
       } catch (error) {
         console.warn("Focus settings parse error", error)
@@ -161,9 +186,19 @@ function Focus() {
   useEffect(() => {
     localStorage.setItem(
       "focus-settings",
-      JSON.stringify({ mode, workMinutes, shortBreakMinutes, longBreakMinutes, soundType, ambientSound, ambientVolume })
+      JSON.stringify({
+        mode,
+        workMinutes,
+        shortBreakMinutes,
+        longBreakMinutes,
+        soundType,
+        ambientSound,
+        ambientVolume,
+        bgSoundOn,
+        youtubeUrl
+      })
     )
-  }, [mode, workMinutes, shortBreakMinutes, longBreakMinutes, soundType, ambientSound, ambientVolume])
+  }, [mode, workMinutes, shortBreakMinutes, longBreakMinutes, soundType, ambientSound, ambientVolume, bgSoundOn, youtubeUrl])
 
   useEffect(() => {
     if (!youtubeUrl || typeof window === "undefined") {
@@ -176,13 +211,14 @@ function Focus() {
   }, [youtubeUrl])
 
   useEffect(() => {
-    if (!isRunning || !soundOn) {
+    if (!isRunning || !bgSoundOn) {
       stopAmbientSound()
       return
     }
 
-    // Autoplay politikası nedeniyle bazı tarayıcılarda user-gesture anında iframe yeniden mount edilmesi gerekir
-    if (youtubeEmbedUrl && youtubeEmbedUrl.trim()) {
+    // Autoplay politikası nedeniyle bazı tarayıcılarda user-gesture anında iframe yeniden mount edilmesi gerekir.
+    // YouTube arka plan sesi sadece çalışma süresince kullanılır.
+    if (isWorkSession && youtubeEmbedUrl && youtubeEmbedUrl.trim()) {
       setYoutubePlayKey((k) => k + 1)
     } else {
       playAmbientSound(ambientSound)
@@ -193,13 +229,31 @@ function Focus() {
       if (!isRunning) stopAmbientSound()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isRunning, soundOn, youtubeEmbedUrl, ambientSound])
+  }, [isRunning, bgSoundOn, youtubeEmbedUrl, ambientSound, isWorkSession])
 
   useEffect(() => {
     if (typeof window === "undefined") return
     if (!("Notification" in window)) return
     if (Notification.permission === "default") {
       Notification.requestPermission()
+    }
+  }, [])
+
+  // YouTube IFrame API yükleme
+  useEffect(() => {
+    if (typeof window === "undefined") return
+    
+    // YouTube API'yi yükle
+    if (!window.YT) {
+      const tag = document.createElement("script")
+      tag.src = "https://www.youtube.com/iframe_api"
+      const firstScriptTag = document.getElementsByTagName("script")[0]
+      firstScriptTag.parentNode.insertBefore(tag, firstScriptTag)
+    }
+
+    // onYouTubeIframeAPIReady global fonksiyonunu tanımla
+    window.onYouTubeIframeAPIReady = () => {
+      // API hazır olduğunda yapılacak işlemler
     }
   }, [])
 
@@ -226,7 +280,7 @@ function Focus() {
     }
   }
 
-  const playTone = (frequency, duration = 0.18, type = "sine") => {
+  const playTone = (frequency, duration = 0.16, type = "sine") => {
     if (!soundOn) return
     if (typeof window === "undefined") return
 
@@ -241,37 +295,81 @@ function Focus() {
       oscillator.connect(gainNode)
       gainNode.connect(audioCtx.destination)
 
-      gainNode.gain.setValueAtTime(0.0001, audioCtx.currentTime)
-      gainNode.gain.exponentialRampToValueAtTime(0.12, audioCtx.currentTime + 0.02)
-      oscillator.start()
-      oscillator.stop(audioCtx.currentTime + duration)
+      const now = audioCtx.currentTime
+
+      // Daha yumuşak envelope: keskin click yerine yumuşak attack/decay
+      const startGain = 0.0001
+      const peakGain = 0.045
+      const attack = 0.02
+      const release = 0.12
+
+      gainNode.gain.setValueAtTime(startGain, now)
+      gainNode.gain.exponentialRampToValueAtTime(peakGain, now + attack)
+
+      oscillator.start(now)
+      oscillator.stop(now + duration + release)
+
+      // Release fazı
+      gainNode.gain.setValueAtTime(peakGain, now + Math.max(0, duration))
+      gainNode.gain.exponentialRampToValueAtTime(startGain, now + duration + release)
 
       oscillator.onended = () => {
-        gainNode.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.02)
-        audioCtx.close()
+        try {
+          audioCtx.close()
+        } catch {
+          // ignore
+        }
       }
     } catch (error) {
       console.warn("Ses oynatılamadı", error)
     }
   }
 
-  const playSound = (type) => {
-    if (!soundOn) return
+	  const playSound = (type) => {
+	    if (!soundOn) return
 
-    if (type === "warning") {
-      playTone(880, 0.08, "square")
-      playTone(1040, 0.06, "square")
-      return
-    }
+	    if (type === "warning") {
+      // Daha melodik ve yumuşak "uyarı": kısa iniş (pentatonik hissi)
+      playTone(784, 0.11, "sine") // G5
+      setTimeout(() => playTone(659, 0.11, "sine"), 120) // E5
+      setTimeout(() => playTone(523, 0.14, "sine"), 240) // C5
+	      return
+	    }
 
-    if (type === "work") {
-      playTone(660, 0.16, "triangle")
+	    if (type === "chime") {
+	      // Parlak chime: kısa major arpej (C6-E6-G6)
+	      playTone(1046.5, 0.11, "sine") // C6
+	      setTimeout(() => playTone(1318.5, 0.11, "sine"), 120) // E6
+	      setTimeout(() => playTone(1568, 0.14, "sine"), 240) // G6
+	      return
+	    }
+
+	    if (type === "soft") {
+	      // Yumuşak: düşük sesli 2 nota (A4->D5)
+	      playTone(440, 0.14, "triangle")
+	      setTimeout(() => playTone(587.3, 0.18, "sine"), 170) // D5
+	      return
+	    }
+
+	    if (type === "digital") {
+	      // Dijital: kısa "blip" çift vuruş
+	      playTone(880, 0.08, "square")
+	      setTimeout(() => playTone(1174.7, 0.08, "square"), 110) // D6
+	      return
+	    }
+
+	    if (type === "work") {
+	      // Çalışma başlangıcı: "başla" chime (2 nota)
+	      playTone(440, 0.12, "sine") // A4
+	      setTimeout(() => playTone(659, 0.14, "sine"), 130) // E5
       return
     }
 
     if (type === "break") {
-      playTone(420, 0.24, "sine")
-      playTone(520, 0.12, "sine")
+      // Mola: küçük major arpej (daha "tatlı")
+      playTone(523, 0.14, "sine") // C5
+      setTimeout(() => playTone(659, 0.14, "sine"), 140) // E5
+      setTimeout(() => playTone(784, 0.16, "sine"), 280) // G5
       return
     }
   }
@@ -368,6 +466,28 @@ function Focus() {
     smoothSetAmbientVolume(targetVolume)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ambientVolume])
+
+  // YouTube ses seviyesini kontrol et
+  useEffect(() => {
+    if (!youtubeEmbedUrl || !youtubeEmbedUrl.trim()) return
+    if (!isRunning || !soundOn) return
+
+    youtubeVolumeRef.current = Math.round(ambientVolume * 100)
+
+    try {
+      const iframe = document.querySelector('iframe[title="YouTube Ambient"]')
+      if (!iframe || !window.YT) return
+
+      // YouTube player'ı iframe'den al
+      const player = iframe.contentWindow?.getYoutubePlayer?.()
+      if (player && player.setVolume) {
+        player.setVolume(youtubeVolumeRef.current)
+      }
+    } catch (error) {
+      // Cross-origin nedeniyle doğrudan erişim başarısız olabilir
+      // Bu durumda tarayıcının ses kontrolünü kullanmasına izin ver
+    }
+  }, [ambientVolume, isRunning, soundOn, youtubeEmbedUrl])
   
   const playAmbientSound = (soundKey) => {
     if (!soundOn || soundKey === "none" || typeof window === "undefined") {
@@ -432,6 +552,36 @@ function Focus() {
   const sessionSubLabel = isWorkSession
     ? "Tam konsantre ol"
     : "Rahatlamak için zaman"
+  const [mottoIndex, setMottoIndex] = useState(0)
+  const mottos = isWorkSession ? WORK_MOTTOS : BREAK_MOTTOS
+  const motto = mottos[mottoIndex % mottos.length]
+
+  useEffect(() => {
+    setMottoIndex(0)
+  }, [isWorkSession])
+
+  useEffect(() => {
+    if (!isRunning) return
+
+    const intervalId = setInterval(() => {
+      setMottoIndex((prev) => prev + 1)
+    }, 6000)
+
+    return () => clearInterval(intervalId)
+  }, [isRunning, isWorkSession])
+
+  const sessionTotalSeconds = isWorkSession
+    ? workMinutes * 60
+    : (cycleCount >= 4 ? longBreakMinutes : shortBreakMinutes) * 60
+
+  const progress = Math.min(
+    1,
+    Math.max(0, sessionTotalSeconds > 0 ? 1 - secondsLeft / sessionTotalSeconds : 0)
+  )
+
+  const ringRadius = 148
+  const ringCircumference = 2 * Math.PI * ringRadius
+  const ringOffset = ringCircumference * (1 - progress)
 
   useEffect(() => {
     if (isRunning && isWarning) {
@@ -441,14 +591,27 @@ function Focus() {
 
 
 
-  const shouldPlayYoutube = Boolean(isRunning && soundOn && youtubeEmbedUrl && youtubeEmbedUrl.trim())
+
+  const shouldPlayYoutube = isWorkSession && isRunning && bgSoundOn && !!(youtubeEmbedUrl && youtubeEmbedUrl.trim())
 
   return (
     <div
-      className={`focus-page p-8 min-h-screen overflow-hidden relative text-white ${
+      className={`focus-page px-4 py-6 sm:p-8 min-h-screen overflow-hidden relative text-white ${
         isWorkSession ? "focus-page--work" : "focus-page--break"
       }`}
     >
+      {shouldPlayYoutube && (
+        <div
+          id="youtube-player-container"
+          style={{
+            position: "absolute",
+            width: "1px",
+            height: "1px",
+            opacity: 0,
+            pointerEvents: "none"
+          }}
+        />
+      )}
       <iframe
         key={youtubePlayKey}
         width="0"
@@ -471,33 +634,43 @@ function Focus() {
         <span className="focus-mode-dot focus-mode-dot--secondary" />
       </div>
 
-      <div className="max-w-7xl mx-auto space-y-10 relative z-10">
-        <section className="glass-card p-8 rounded-3xl border border-white/10 shadow-2xl overflow-hidden">
+      <div className="max-w-7xl mx-auto space-y-8 sm:space-y-10 relative z-10">
+        <section className="glass-card p-5 sm:p-8 rounded-3xl border border-white/10 shadow-2xl overflow-hidden">
           <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <div>
-              <h1 className="text-4xl font-bold">Odaklanma Modları</h1>
-              <p className="text-zinc-300 mt-2 max-w-2xl">
+              <h1 className="text-3xl sm:text-4xl font-bold">Odaklanma Modları</h1>
+              <p className="text-zinc-300 mt-2 max-w-2xl text-sm sm:text-base">
                 Pomodoro tempo, çalışma ve mola sürelerini özelleştirebileceğin bir odak alanı. Zamanın sonuna yaklaştığında görsel uyarılar ve ekran bildirimleri alırsın.
               </p>
             </div>
-            <div className="flex flex-wrap items-center gap-3">
-              <label className="inline-flex items-center gap-2 rounded-2xl border border-white/10 bg-zinc-900/80 px-4 py-3 text-sm text-zinc-200">
-                <input
-                  type="checkbox"
-                  checked={soundOn}
-                  onChange={() => setSoundOn((prev) => !prev)}
-                  className="h-4 w-4 rounded border-zinc-700 bg-zinc-800 text-blue-500 focus:ring-blue-400"
-                />
-                Ses efektleri
-              </label>
+	            <div className="flex flex-wrap items-center gap-3">
+	              <label className="inline-flex items-center gap-2 rounded-2xl border border-white/10 bg-zinc-900/80 px-4 py-3 text-sm text-zinc-200">
+	                <input
+	                  type="checkbox"
+	                  checked={soundOn}
+	                  onChange={() => setSoundOn((prev) => !prev)}
+	                  className="h-4 w-4 rounded border-zinc-700 bg-zinc-800 text-blue-500 focus:ring-blue-400"
+	                />
+	                Ses efektleri
+	              </label>
 
-              <div className="flex flex-wrap gap-3">
+	              <label className="inline-flex items-center gap-2 rounded-2xl border border-white/10 bg-zinc-900/80 px-4 py-3 text-sm text-zinc-200">
+	                <input
+	                  type="checkbox"
+	                  checked={bgSoundOn}
+	                  onChange={() => setBgSoundOn((prev) => !prev)}
+	                  className="h-4 w-4 rounded border-zinc-700 bg-zinc-800 text-blue-500 focus:ring-blue-400"
+	                />
+	                Arka plan sesi
+	              </label>
+
+              <div className="flex flex-wrap gap-2 sm:gap-3">
                 {Object.keys(PRESETS).map((preset) => (
                   <button
                     key={preset}
                     type="button"
                     onClick={() => applyPreset(preset)}
-                    className={`rounded-2xl px-5 py-3 text-sm font-semibold transition ${mode === preset ? "bg-blue-500 text-white" : "bg-zinc-800 text-zinc-200 hover:bg-zinc-700"}`}
+                    className={`rounded-2xl px-4 sm:px-5 py-3 text-sm font-semibold transition ${mode === preset ? "bg-blue-500 text-white" : "bg-zinc-800 text-zinc-200 hover:bg-zinc-700"}`}
                   >
                     {preset === "pomodoro" ? "Pomodoro" : preset === "quick" ? "Hızlı" : "Uzun"}
                   </button>
@@ -508,14 +681,14 @@ function Focus() {
         </section>
 
         <div className="grid gap-6 xl:grid-cols-[1.2fr_0.8fr]">
-          <section className="glass-card p-8 rounded-3xl border border-white/10 shadow-2xl relative overflow-hidden">
+          <section className="glass-card p-5 sm:p-8 rounded-3xl border border-white/10 shadow-2xl relative overflow-hidden">
             <div className="flex items-center justify-between mb-6 gap-4">
               <div>
                 <p className="text-sm uppercase tracking-[0.3em] text-blue-300">{sessionLabel} Zamanlayıcı</p>
-                <h2 className="text-3xl font-bold mt-3">{formatTime(secondsLeft)}</h2>
+                <h2 className="text-3xl sm:text-4xl font-bold mt-3">{formatTime(secondsLeft)}</h2>
               </div>
               <div className="text-right">
-                <p className="text-zinc-300">{sessionSubLabel}</p>
+                <p className="text-zinc-300 text-sm sm:text-base">{sessionSubLabel}</p>
                 <span className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${isWorkSession ? "bg-green-500/20 text-green-300" : "bg-sky-500/20 text-sky-300"}`}>
                   {isWorkSession ? "Çalışma" : "Mola"}
                 </span>
@@ -523,8 +696,53 @@ function Focus() {
             </div>
 
             <div className={`focus-timer-card ${isWarning ? "focus-timer-card--warning" : ""}`}>
-              <div className="focus-timer-ring">
-                <span className="focus-timer-ring__label">{sessionLabel}</span>
+              <div
+                className={`focus-timer-ring ${isWorkSession ? "focus-timer-ring--work" : "focus-timer-ring--break"} ${
+                  isRunning ? "focus-timer-ring--running" : ""
+                }`}
+              >
+                <svg
+                  className="focus-timer-ring__svg"
+                  viewBox="0 0 320 320"
+                  width="320"
+                  height="320"
+                  aria-hidden="true"
+                >
+                  <defs>
+                    <linearGradient id="ringGradientWork" x1="0" y1="0" x2="1" y2="1">
+                      <stop offset="0%" stopColor="rgba(56, 189, 248, 0.95)" />
+                      <stop offset="55%" stopColor="rgba(59, 130, 246, 0.85)" />
+                      <stop offset="100%" stopColor="rgba(14, 165, 233, 0.90)" />
+                    </linearGradient>
+                    <linearGradient id="ringGradientBreak" x1="0" y1="0" x2="1" y2="1">
+                      <stop offset="0%" stopColor="rgba(52, 211, 153, 0.95)" />
+                      <stop offset="55%" stopColor="rgba(16, 185, 129, 0.85)" />
+                      <stop offset="100%" stopColor="rgba(34, 211, 238, 0.90)" />
+                    </linearGradient>
+                  </defs>
+
+                  <circle
+                    className="focus-timer-ring__track"
+                    cx="160"
+                    cy="160"
+                    r={ringRadius}
+                  />
+                  <circle
+                    className="focus-timer-ring__progress"
+                    cx="160"
+                    cy="160"
+                    r={ringRadius}
+                    strokeDasharray={ringCircumference}
+                    strokeDashoffset={ringOffset}
+                    stroke={`url(#${isWorkSession ? "ringGradientWork" : "ringGradientBreak"})`}
+                  />
+                </svg>
+                <div className="focus-timer-ring__content">
+                  <span className="focus-timer-ring__label">{sessionLabel}</span>
+                  <span className="focus-timer-ring__motto" key={`${sessionLabel}-${mottoIndex}`}>
+                    {motto}
+                  </span>
+                </div>
               </div>
             </div>
 
@@ -532,14 +750,14 @@ function Focus() {
               <button
                 type="button"
                 onClick={() => setIsRunning((prev) => !prev)}
-                className="rounded-2xl bg-blue-500 px-6 py-3 font-semibold text-white hover:bg-blue-400"
+                className="flex-1 sm:flex-none rounded-2xl bg-blue-500 px-6 py-3 font-semibold text-white hover:bg-blue-400"
               >
                 {isRunning ? "Duraklat" : "Başlat"}
               </button>
               <button
                 type="button"
                 onClick={resetTimer}
-                className="rounded-2xl border border-white/10 bg-white/5 px-6 py-3 text-white hover:bg-white/10"
+                className="flex-1 sm:flex-none rounded-2xl border border-white/10 bg-white/5 px-6 py-3 text-white hover:bg-white/10"
               >
                 Sıfırla
               </button>
@@ -607,12 +825,12 @@ function Focus() {
               </label>
             </div>
 
-            <div className="border-t border-white/10 pt-6">
-              <h4 className="text-lg font-semibold mb-3">Ses Efektleri</h4>
-              <label className="block mb-4">
-                <span className="text-sm text-zinc-200">Bildirim sesi seç</span>
-                <div className="mt-2 grid grid-cols-2 gap-2">
-                  {Object.values(SOUND_TYPES).map((sound) => (
+	            <div className="border-t border-white/10 pt-6">
+	              <h4 className="text-lg font-semibold mb-3">Ses Efektleri</h4>
+	              <label className="block mb-4">
+	                <span className="text-sm text-zinc-200">Bildirim sesi seç</span>
+	                <div className="mt-2 grid grid-cols-2 gap-2">
+	                  {Object.values(SOUND_TYPES).map((sound) => (
                     <button
                       key={sound.key}
                       type="button"
@@ -628,55 +846,35 @@ function Focus() {
                   ))}
                 </div>
               </label>
-              <button
-                type="button"
-                onClick={() => {
-                  if (soundOn) playSound(soundType)
-                }}
-                disabled={!soundOn}
-                className={`w-full rounded-lg px-4 py-2 text-sm font-semibold transition ${
-                  soundOn
-                    ? "bg-purple-500/20 text-purple-200 hover:bg-purple-500/30"
-                    : "bg-zinc-800 text-zinc-500 cursor-not-allowed"
-                }`}
-              >
-                🔊 Sesi Test Et
-              </button>
-            </div>
+	              <button
+	                type="button"
+	                onClick={() => {
+	                  if (soundOn) playSound(soundType)
+	                }}
+	                disabled={!soundOn}
+	                className={`w-full rounded-lg px-4 py-2 text-sm font-semibold transition ${
+	                  soundOn
+	                    ? "bg-purple-500/20 text-purple-200 hover:bg-purple-500/30"
+	                    : "bg-zinc-800 text-zinc-500 cursor-not-allowed"
+	                }`}
+	              >
+		                🔊 Sesi Test Et
+		              </button>
+	            </div>
 
             <div className="border-t border-white/10 pt-6 mt-6">
-              <h4 className="text-lg font-semibold mb-3">Arka Plan Sesleri</h4>
-              <p className="text-xs text-zinc-400 mb-4">Çalışma veya mola sırasında doğa seslerini dinle</p>
-
-              <label className="block mb-4">
-                <span className="text-sm text-zinc-200 mb-2 block">Ortam sesi seç</span>
-                <div className="grid grid-cols-2 gap-2 mb-4">
-                  {Object.values(AMBIENT_SOUNDS).map((sound) => (
-                    <button
-                      key={sound.key}
-                      type="button"
-                      onClick={() => setAmbientSound(sound.key)}
-                      className={`rounded-lg px-3 py-2 text-xs font-semibold transition ${
-                        ambientSound === sound.key
-                          ? "bg-cyan-500 text-white"
-                          : "bg-zinc-800 text-zinc-200 hover:bg-zinc-700"
-                      }`}
-                    >
-                      {sound.label}
-                    </button>
-                  ))}
-                </div>
-              </label>
+              <h4 className="text-lg font-semibold mb-3">YouTube Arka Plan Sesi</h4>
 
               <div className="mb-4">
                 <span className="text-sm text-zinc-200 mb-2 block">Kendi ses URL’in (mp3/aac direkt link)</span>
                 <input
                   value={youtubeUrl}
                   onChange={(e) => setYoutubeUrl(e.target.value)}
-                  placeholder="https://.../audio.mp3"
-                  className="w-full mb-3 px-4 py-2 bg-zinc-800 border border-zinc-700 rounded-lg text-white outline-none focus:border-blue-400"
+                  placeholder="https://.../audio.mp3 veya YouTube video linki"
+                  className="w-full mt-2 px-4 py-2 bg-zinc-800 border border-zinc-700 rounded-lg text-white outline-none focus:border-blue-400"
                 />
-                <div className="flex gap-2">
+
+                <div className="flex gap-2 mt-3">
                   <button
                     type="button"
                     onClick={() => {
@@ -686,12 +884,12 @@ function Focus() {
                         return
                       }
                       setYoutubeUrl(v)
+                      addNotification("YouTube/Link kaydedildi. Timer ile otomatik açılmaz.", "success", 3000)
                     }}
                     className="bg-blue-500 hover:bg-blue-400 px-4 py-2 rounded-lg text-sm font-semibold"
                   >
                     Uygula
                   </button>
-
 
                   <button
                     type="button"
@@ -705,7 +903,7 @@ function Focus() {
                 </div>
               </div>
 
-              <label className="block">
+              <label className="block mt-4">
                 <span className="text-sm text-zinc-200 mb-2 block">Ses seviyesi: {Math.round(ambientVolume * 100)}%</span>
                 <input
                   type="range"
@@ -715,13 +913,9 @@ function Focus() {
                   value={ambientVolume}
                   onChange={(e) => setAmbientVolume(parseFloat(e.target.value))}
                   className="w-full h-2 bg-zinc-700 rounded-lg appearance-none cursor-pointer"
+                  disabled={isRunning && !soundOn}
                 />
               </label>
-            </div>
-
-            <div className="mt-8 rounded-3xl border border-blue-400/20 bg-blue-500/5 p-4">
-              <p className="text-sm text-blue-200">Mola zamanı geldiğinde tarayıcı bildirimleri ve ekran içi uyarılar alırsın.</p>
-              <p className="mt-2 text-sm text-zinc-400">Tarayıcı izinlerini verdiysen, bildirimler otomatik olarak gösterilir.</p>
             </div>
           </section>
         </div>

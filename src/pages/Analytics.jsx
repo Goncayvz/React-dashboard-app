@@ -101,11 +101,11 @@ const lineData = days.map(day => ({
   tasks: taskByDay[day]
 }))
   return (
-    <div className="p-8 text-white">
+    <div className="px-4 py-6 sm:p-8 text-white">
       <h1 className="text-3xl font-bold mb-8">Analitik Paneli</h1>
 
       {/* STATS */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         <div className="glass-card bg-gradient-to-br from-blue-900 to-blue-800 p-6 rounded-3xl border border-white/10">
           <h2 className="text-zinc-300 text-sm mb-2">Toplam Görev</h2>
           <p className="text-4xl font-bold">{stats.totalTasks}</p>
