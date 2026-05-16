@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { useBadge } from "../context/BadgeContext"
 import { useUser } from "../context/UserContext"
 
@@ -24,10 +24,6 @@ function Profile() {
   const { getEarnedBadgesList } = useBadge()
   const [isEditing, setIsEditing] = useState(false)
   const [formData, setFormData] = useState(user)
-
-  useEffect(() => {
-    setFormData(user)
-  }, [user])
 
   const savedTasks = localStorage.getItem("tasks")
   const tasks = savedTasks ? JSON.parse(savedTasks) : []
@@ -159,7 +155,10 @@ function Profile() {
               </div>
 
               <button
-                onClick={() => setIsEditing(true)}
+                onClick={() => {
+                  setFormData(user)
+                  setIsEditing(true)
+                }}
                 className="mt-8 w-full bg-blue-500 hover:bg-blue-600 px-6 py-3 rounded-3xl"
               >
                 Profili Düzenle

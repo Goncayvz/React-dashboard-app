@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useMemo } from "react"
 import { useBadge } from "../context/BadgeContext"
 
 import {
@@ -17,49 +17,36 @@ import {
 function Analytics() {
   const { getEarnedBadgesList } = useBadge()
 
-  const [stats, setStats] = useState({
-    totalTasks: 0,
-    completedTasks: 0,
-    inProgressTasks: 0,
-    completionRate: 0,
-    badges: 0,
-    createdToday: 0,
-    completedToday: 0
-  })
-
-  useEffect(() => {
+  const stats = useMemo(() => {
     const savedTasks = localStorage.getItem("tasks")
     const tasks = savedTasks ? JSON.parse(savedTasks) : []
     const badges = getEarnedBadgesList()
 
     const today = new Date().toDateString()
 
-    const completedCount = tasks.filter(t => t.status === "Completed").length
-    const inProgressCount = tasks.filter(t => t.status === "In Progress").length
+    const completedCount = tasks.filter((t) => t.status === "Completed").length
+    const inProgressCount = tasks.filter((t) => t.status === "In Progress").length
 
     const completionRate =
-      tasks.length > 0
-        ? Math.round((completedCount / tasks.length) * 100)
-        : 0
+      tasks.length > 0 ? Math.round((completedCount / tasks.length) * 100) : 0
 
-    const createdTodayCount = tasks.filter(t => {
+    const createdTodayCount = tasks.filter((t) => {
       const taskDate = new Date(t.id).toDateString()
       return taskDate === today
     }).length
 
-    const completedTodayCount = tasks.filter(t => {
-      return t.status === "Completed"
-    }).length
+    const completedTodayCount = tasks.filter((t) => t.status === "Completed").length
 
-    setStats({
+    return {
       totalTasks: tasks.length,
       completedTasks: completedCount,
       inProgressTasks: inProgressCount,
       completionRate,
       badges: badges.length,
       createdToday: createdTodayCount,
-      completedToday: completedTodayCount
-    })
+      completedToday: completedTodayCount,
+      tasks
+    }
   }, [getEarnedBadgesList])
 
   //REAL CHART DATA 
@@ -77,9 +64,6 @@ function Analytics() {
   }
   const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
 
-  const savedTasks = localStorage.getItem("tasks")
-  const tasks = savedTasks ? JSON.parse(savedTasks) : []
-
   const taskByDay = {
     Sun: 0,
     Mon: 0,
@@ -91,7 +75,7 @@ function Analytics() {
   }
 
 // task.id üzerinden fake tarih üretim
-tasks.forEach(task => {
+stats.tasks.forEach((task) => {
   const dayIndex = new Date(task.id).getDay()
   const dayName = days[dayIndex]
   taskByDay[dayName]++

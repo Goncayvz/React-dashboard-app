@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import { createContext, useState, useContext, useEffect } from "react"
 
 const BadgeContext = createContext()
@@ -183,7 +184,7 @@ export function BadgeProvider({ children }) {
     return false
   }
 
-  function checkAndAwardBadges(completedCount, totalCount = 0, taskData = {}) {
+  function checkAndAwardBadges(completedCount, totalCount = 0) {
     const newBadges = []
     
     // Tamamlama sayısına göre

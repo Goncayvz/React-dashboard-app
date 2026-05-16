@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react"
+import { useCallback, useEffect, useMemo, useState, useRef } from "react"
 import { useNotification } from "../context/NotificationContext"
 import "../styles/focus-mode.css"
 
@@ -126,62 +126,52 @@ const defaultSettings = {
   youtubeUrl: ""
 }
 
+const loadFocusSettings = () => {
+  if (typeof window === "undefined") return { ...defaultSettings }
+
+  try {
+    const saved = localStorage.getItem("focus-settings")
+    const parsed = saved ? JSON.parse(saved) : {}
+
+    return {
+      ...defaultSettings,
+      ...parsed,
+      bgSoundOn: typeof parsed.bgSoundOn === "boolean" ? parsed.bgSoundOn : defaultSettings.bgSoundOn,
+      youtubeUrl: typeof parsed.youtubeUrl === "string" ? parsed.youtubeUrl : defaultSettings.youtubeUrl
+    }
+  } catch {
+    return { ...defaultSettings }
+  }
+}
 
 
 function Focus() {
   const { addNotification } = useNotification()
-  const [mode, setMode] = useState(defaultSettings.mode)
-  const [workMinutes, setWorkMinutes] = useState(defaultSettings.workMinutes)
-  const [shortBreakMinutes, setShortBreakMinutes] = useState(defaultSettings.shortBreakMinutes)
-  const [longBreakMinutes, setLongBreakMinutes] = useState(defaultSettings.longBreakMinutes)
-  const [isWorkSession, setIsWorkSession] = useState(defaultSettings.isWorkSession)
-  const [secondsLeft, setSecondsLeft] = useState(defaultSettings.secondsLeft)
+  const initialSettings = loadFocusSettings()
+
+  const [mode, setMode] = useState(initialSettings.mode)
+  const [workMinutes, setWorkMinutes] = useState(initialSettings.workMinutes)
+  const [shortBreakMinutes, setShortBreakMinutes] = useState(initialSettings.shortBreakMinutes)
+  const [longBreakMinutes, setLongBreakMinutes] = useState(initialSettings.longBreakMinutes)
+  const [isWorkSession, setIsWorkSession] = useState(initialSettings.isWorkSession)
+  const [secondsLeft, setSecondsLeft] = useState(initialSettings.secondsLeft)
   const [isRunning, setIsRunning] = useState(false)
-  const [cycleCount, setCycleCount] = useState(defaultSettings.cycleCount)
-  const [customWork, setCustomWork] = useState(defaultSettings.workMinutes)
-  const [customShortBreak, setCustomShortBreak] = useState(defaultSettings.shortBreakMinutes)
-  const [customLongBreak, setCustomLongBreak] = useState(defaultSettings.longBreakMinutes)
-  const [soundType, setSoundType] = useState(defaultSettings.soundType)
-  const [ambientSound, setAmbientSound] = useState(defaultSettings.ambientSound)
-  const [ambientVolume, setAmbientVolume] = useState(defaultSettings.ambientVolume)
+  const [cycleCount, setCycleCount] = useState(initialSettings.cycleCount)
+  const [customWork, setCustomWork] = useState(initialSettings.workMinutes)
+  const [customShortBreak, setCustomShortBreak] = useState(initialSettings.shortBreakMinutes)
+  const [customLongBreak, setCustomLongBreak] = useState(initialSettings.longBreakMinutes)
+  const [soundType, setSoundType] = useState(initialSettings.soundType)
+  const [ambientSound] = useState(initialSettings.ambientSound)
+  const [ambientVolume, setAmbientVolume] = useState(initialSettings.ambientVolume)
   const [soundOn, setSoundOn] = useState(true)
-  const [bgSoundOn, setBgSoundOn] = useState(defaultSettings.bgSoundOn)
+  const [bgSoundOn, setBgSoundOn] = useState(initialSettings.bgSoundOn)
 
   // User-provided YouTube link
-  const [youtubeUrl, setYoutubeUrl] = useState(defaultSettings.youtubeUrl)
+  const [youtubeUrl, setYoutubeUrl] = useState(initialSettings.youtubeUrl)
 
   
-  const [youtubeEmbedUrl, setYoutubeEmbedUrl] = useState("")
-  const [youtubePlayKey, setYoutubePlayKey] = useState(0)
-
-  const audioContextRef = useRef(null)
   const ambientAudioRef = useRef(null)
-  const youtubePlayerRef = useRef(null)
   const youtubeVolumeRef = useRef(ambientVolume)
-
-  useEffect(() => {
-    const saved = localStorage.getItem("focus-settings")
-    if (saved) {
-      try {
-        const parsed = JSON.parse(saved)
-        setMode(parsed.mode || defaultSettings.mode)
-        setWorkMinutes(parsed.workMinutes || defaultSettings.workMinutes)
-        setShortBreakMinutes(parsed.shortBreakMinutes || defaultSettings.shortBreakMinutes)
-        setLongBreakMinutes(parsed.longBreakMinutes || defaultSettings.longBreakMinutes)
-        setCustomWork(parsed.workMinutes || defaultSettings.workMinutes)
-        setCustomShortBreak(parsed.shortBreakMinutes || defaultSettings.shortBreakMinutes)
-        setCustomLongBreak(parsed.longBreakMinutes || defaultSettings.longBreakMinutes)
-        setSoundType(parsed.soundType || defaultSettings.soundType)
-        setAmbientSound(parsed.ambientSound || defaultSettings.ambientSound)
-        setAmbientVolume(parsed.ambientVolume || defaultSettings.ambientVolume)
-        setBgSoundOn(typeof parsed.bgSoundOn === "boolean" ? parsed.bgSoundOn : defaultSettings.bgSoundOn)
-        setYoutubeUrl(parsed.youtubeUrl || defaultSettings.youtubeUrl)
-        setSecondsLeft((parsed.workMinutes || defaultSettings.workMinutes) * 60)
-      } catch (error) {
-        console.warn("Focus settings parse error", error)
-      }
-    }
-  }, [])
 
   useEffect(() => {
     localStorage.setItem(
@@ -200,15 +190,14 @@ function Focus() {
     )
   }, [mode, workMinutes, shortBreakMinutes, longBreakMinutes, soundType, ambientSound, ambientVolume, bgSoundOn, youtubeUrl])
 
-  useEffect(() => {
-    if (!youtubeUrl || typeof window === "undefined") {
-      setYoutubeEmbedUrl("")
-      return
-    }
-
-    const embed = getYoutubeEmbedUrl(youtubeUrl.trim())
-    setYoutubeEmbedUrl(embed)
+  const youtubeEmbedUrl = useMemo(() => {
+    if (!youtubeUrl || typeof window === "undefined") return ""
+    return getYoutubeEmbedUrl(youtubeUrl.trim())
   }, [youtubeUrl])
+
+  const youtubeIframeKey = useMemo(() => {
+    return `${isRunning ? "run" : "stop"}:${bgSoundOn ? "bg1" : "bg0"}:${isWorkSession ? "work" : "break"}:${youtubeEmbedUrl}`
+  }, [bgSoundOn, isRunning, isWorkSession, youtubeEmbedUrl])
 
   useEffect(() => {
     if (!isRunning || !bgSoundOn) {
@@ -219,7 +208,7 @@ function Focus() {
     // Autoplay politikası nedeniyle bazı tarayıcılarda user-gesture anında iframe yeniden mount edilmesi gerekir.
     // YouTube arka plan sesi sadece çalışma süresince kullanılır.
     if (isWorkSession && youtubeEmbedUrl && youtubeEmbedUrl.trim()) {
-      setYoutubePlayKey((k) => k + 1)
+      // iframe key değişimi remount sağlar
     } else {
       playAmbientSound(ambientSound)
     }
@@ -257,13 +246,15 @@ function Focus() {
     }
   }, [])
 
+  const endSessionRef = useRef(null)
+
   useEffect(() => {
     if (!isRunning) return
 
     const timeoutId = setTimeout(() => {
       setSecondsLeft((prev) => {
         if (prev <= 1) {
-          endSession()
+          endSessionRef.current?.()
           return prev
         }
         return prev - 1
@@ -271,16 +262,16 @@ function Focus() {
     }, 1000)
 
     return () => clearTimeout(timeoutId)
-  }, [isRunning, secondsLeft, isWorkSession, workMinutes, shortBreakMinutes, longBreakMinutes, cycleCount])
+  }, [isRunning, secondsLeft])
 
-  const sendBrowserNotification = (message) => {
+  const sendBrowserNotification = useCallback((message) => {
     if (typeof window === "undefined" || !("Notification" in window)) return
     if (Notification.permission === "granted") {
       new Notification(message)
     }
-  }
+  }, [])
 
-  const playTone = (frequency, duration = 0.16, type = "sine") => {
+  const playTone = useCallback((frequency, duration = 0.16, type = "sine") => {
     if (!soundOn) return
     if (typeof window === "undefined") return
 
@@ -323,12 +314,12 @@ function Focus() {
     } catch (error) {
       console.warn("Ses oynatılamadı", error)
     }
-  }
+  }, [soundOn])
 
-	  const playSound = (type) => {
-	    if (!soundOn) return
+  const playSound = useCallback((type) => {
+    if (!soundOn) return
 
-	    if (type === "warning") {
+    if (type === "warning") {
       // Daha melodik ve yumuşak "uyarı": kısa iniş (pentatonik hissi)
       playTone(784, 0.11, "sine") // G5
       setTimeout(() => playTone(659, 0.11, "sine"), 120) // E5
@@ -372,7 +363,7 @@ function Focus() {
       setTimeout(() => playTone(784, 0.16, "sine"), 280) // G5
       return
     }
-  }
+  }, [playTone, soundOn])
 
   const applyPreset = (presetKey) => {
     const preset = PRESETS[presetKey]
@@ -384,6 +375,7 @@ function Focus() {
     setCustomShortBreak(preset.shortBreak)
     setCustomLongBreak(preset.longBreak)
     setIsWorkSession(true)
+    setMottoIndex(0)
     setSecondsLeft(preset.work * 60)
     setCycleCount(0)
     setIsRunning(false)
@@ -394,12 +386,13 @@ function Focus() {
     setIsRunning(false)
   }
 
-  const endSession = () => {
+  const endSession = useCallback(() => {
     if (isWorkSession) {
       const nextCycle = cycleCount + 1
       const nextBreak = nextCycle >= 4 ? longBreakMinutes : shortBreakMinutes
       const isLongBreak = nextCycle >= 4
       setIsWorkSession(false)
+      setMottoIndex(0)
       setSecondsLeft(nextBreak * 60)
       setCycleCount(isLongBreak ? 0 : nextCycle)
 
@@ -409,20 +402,34 @@ function Focus() {
       playSound("break")
     } else {
       setIsWorkSession(true)
+      setMottoIndex(0)
       setSecondsLeft(workMinutes * 60)
       addNotification("Çalışma zamanı! Odaklanmaya geri dön.", "info", 4500)
       sendBrowserNotification("Çalışma zamanı! Odaklanmaya geri dön.")
       playSound("work")
     }
-  }
+  }, [
+    addNotification,
+    cycleCount,
+    isWorkSession,
+    longBreakMinutes,
+    playSound,
+    sendBrowserNotification,
+    shortBreakMinutes,
+    workMinutes
+  ])
 
-  const stopAmbientSound = () => {
+  useEffect(() => {
+    endSessionRef.current = endSession
+  }, [endSession])
+
+  function stopAmbientSound() {
     if (!ambientAudioRef.current) return
     ambientAudioRef.current.pause()
     ambientAudioRef.current.currentTime = 0
   }
 
-  const smoothSetAmbientVolume = (targetVolume) => {
+  function smoothSetAmbientVolume(targetVolume) {
     const audio = ambientAudioRef.current
     if (!audio) return
 
@@ -483,13 +490,13 @@ function Focus() {
       if (player && player.setVolume) {
         player.setVolume(youtubeVolumeRef.current)
       }
-    } catch (error) {
+    } catch {
       // Cross-origin nedeniyle doğrudan erişim başarısız olabilir
       // Bu durumda tarayıcının ses kontrolünü kullanmasına izin ver
     }
   }, [ambientVolume, isRunning, soundOn, youtubeEmbedUrl])
   
-  const playAmbientSound = (soundKey) => {
+  function playAmbientSound(soundKey) {
     if (!soundOn || soundKey === "none" || typeof window === "undefined") {
       stopAmbientSound()
       return
@@ -543,6 +550,7 @@ function Focus() {
     setSecondsLeft(newWork * 60)
     setCycleCount(0)
     setIsWorkSession(true)
+    setMottoIndex(0)
     setIsRunning(false)
     addNotification("Özel süreler kaydedildi.", "success", 3000)
   }
@@ -555,10 +563,6 @@ function Focus() {
   const [mottoIndex, setMottoIndex] = useState(0)
   const mottos = isWorkSession ? WORK_MOTTOS : BREAK_MOTTOS
   const motto = mottos[mottoIndex % mottos.length]
-
-  useEffect(() => {
-    setMottoIndex(0)
-  }, [isWorkSession])
 
   useEffect(() => {
     if (!isRunning) return
@@ -587,7 +591,7 @@ function Focus() {
     if (isRunning && isWarning) {
       playSound("warning")
     }
-  }, [isRunning, isWarning])
+  }, [isRunning, isWarning, playSound])
 
 
 
@@ -613,7 +617,7 @@ function Focus() {
         />
       )}
       <iframe
-        key={youtubePlayKey}
+        key={youtubeIframeKey}
         width="0"
         height="0"
         src={shouldPlayYoutube ? youtubeEmbedUrl : ""}
