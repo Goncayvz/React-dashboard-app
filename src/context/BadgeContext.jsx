@@ -3,7 +3,7 @@ import { createContext, useState, useContext, useEffect } from "react"
 
 const BadgeContext = createContext()
 
-const BADGES = [
+export const BADGES = [
   {
     id: 1,
     name: "İlk Adım",
@@ -165,6 +165,28 @@ const BADGES = [
     category: "setup"
   }
 ]
+
+export function getBadgeAwards(completedCount, totalCount = 0, earnedBadges = []) {
+  const earnedSet = new Set(earnedBadges)
+  const awards = [
+    ...BADGES.filter(
+      (badge) => badge.category === "completions" && completedCount >= badge.threshold && !earnedSet.has(badge.id)
+    ),
+    ...BADGES.filter((badge) => badge.category === "speed" && completedCount >= badge.threshold && !earnedSet.has(badge.id))
+  ]
+
+  const perfectBadge = BADGES.find((badge) => badge.id === 14)
+  if (totalCount > 0 && completedCount === totalCount && totalCount >= 5 && perfectBadge && !earnedSet.has(14)) {
+    awards.push(perfectBadge)
+  }
+
+  const creatorBadge = BADGES.find((badge) => badge.id === 12)
+  if (totalCount >= 10 && creatorBadge && !earnedSet.has(12)) {
+    awards.push(creatorBadge)
+  }
+
+  return awards
+}
 
 export function BadgeProvider({ children }) {
   const [earnedBadges, setEarnedBadges] = useState(() => {

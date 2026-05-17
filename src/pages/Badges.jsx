@@ -1,8 +1,19 @@
+import { useEffect } from "react"
 import { useBadge } from "../context/BadgeContext"
+import { useNotification } from "../context/NotificationContext"
 
 function Badges() {
   const { getEarnedBadgesList, BADGES } = useBadge()
   const earnedBadges = getEarnedBadgesList()
+  const { clearNotifications } = useNotification()
+
+  useEffect(() => {
+    // sayfa açılınca bildirimleri sil
+    clearNotifications()
+  }, [clearNotifications])
+
+
+
 
   const categories = {
     completions: { name: "🎯 Tamamlama Seviyeleri", color: "from-blue-900 to-blue-800" },
@@ -20,23 +31,29 @@ function Badges() {
   }
 
   const getBadgesByCategory = (categoryKey) => {
-    return BADGES.filter(b => b.category === categoryKey)
+    return BADGES.filter((b) => b.category === categoryKey)
   }
 
   const isBadgeEarned = (badgeId) => {
-    return earnedBadges.some(b => b.id === badgeId)
+    return earnedBadges.some((b) => b.id === badgeId)
   }
 
   return (
     <div className="px-4 py-6 sm:p-8">
-      <div className="mb-8">
+      <div className="mb-8" onClick={clearNotifications}>
         <h1 className="text-4xl font-bold mb-2">🏆 Rozetler</h1>
-        <p className="text-zinc-400">Kazanılan: <span className="text-yellow-400 font-bold">{earnedBadges.length}</span> / {BADGES.length}</p>
+        <p className="text-zinc-400">
+          Kazanılan:{" "}
+          <span className="text-yellow-400 font-bold">{earnedBadges.length}</span> / {BADGES.length}
+        </p>
       </div>
 
       {/* Kazanılan Rozetler Hızlı Gösterim */}
       {earnedBadges.length > 0 && (
-        <div className="bg-gradient-to-r from-yellow-900/20 to-yellow-800/20 border border-yellow-700 rounded-lg p-6 mb-8">
+        <div
+          className="bg-gradient-to-r from-yellow-900/20 to-yellow-800/20 border border-yellow-700 rounded-lg p-6 mb-8"
+          onClick={clearNotifications}
+        >
           <h2 className="text-xl font-bold text-yellow-400 mb-4">⭐ Kazanılan Rozetler</h2>
           <div className="flex flex-wrap gap-3">
             {earnedBadges.map((badge) => (
@@ -59,7 +76,7 @@ function Badges() {
       <div className="space-y-8">
         {Object.entries(categories).map(([categoryKey, categoryInfo]) => {
           const badgesInCategory = getBadgesByCategory(categoryKey)
-          const earnedInCategory = badgesInCategory.filter(b => isBadgeEarned(b.id))
+          const earnedInCategory = badgesInCategory.filter((b) => isBadgeEarned(b.id))
 
           return (
             <div key={categoryKey} className="rounded-lg overflow-hidden border border-zinc-800">
@@ -87,9 +104,7 @@ function Badges() {
                         <div className={`text-4xl ${isBadgeEarned(badge.id) ? "" : "grayscale"}`}>
                           {badge.icon}
                         </div>
-                        {isBadgeEarned(badge.id) && (
-                          <div className="text-yellow-400 text-xl">✓</div>
-                        )}
+                        {isBadgeEarned(badge.id) && <div className="text-yellow-400 text-xl">✓</div>}
                       </div>
                       <h4 className="font-bold text-white">{badge.name}</h4>
                       <p className="text-sm text-zinc-400">{badge.description}</p>
@@ -118,3 +133,4 @@ function Badges() {
 }
 
 export default Badges
+

@@ -275,11 +275,27 @@
   }
 }
 
+/* Global animation kill-switch (requested: "animasyonu kaldıralım") */
 @media (prefers-reduced-motion: reduce) {
   .focus-timer-ring::after,
   .focus-timer-ring--running,
   .focus-timer-ring__motto,
-  .focus-timer-ring__progress {
+  .focus-timer-ring__progress,
+  .focus-wave,
+  .focus-mode-dot,
+  .focus-mode-dot--secondary {
     animation: none !important;
   }
 }
+
+/* Force animations off regardless of user preference */
+.focus-wave--work,
+.focus-wave--break,
+.focus-mode-dot,
+.focus-mode-dot--secondary,
+.focus-timer-ring--running,
+.focus-timer-ring__motto,
+.focus-timer-ring::after {
+  animation: none !important;
+}
+
