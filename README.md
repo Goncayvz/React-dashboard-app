@@ -154,18 +154,7 @@ Uygulamada yer alan temel ekranlar:
 - Badges
 
 ---
-
-# Geliştirme Notları
-
-Bu proje öğrenme ve portföy amacıyla geliştirilmiştir. Mevcut yapı çalışır durumdadır; daha ileri geliştirmeler için şu adımlar değerlendirilebilir:
-
-- Focus sayfasını daha küçük component'lara bölmek
-- Görev işlemleri için ayrı custom hook yazmak
-- Daha kapsamlı component testleri eklemek
-- TypeScript'e geçmek
-- localStorage yerine Firebase, Supabase veya özel bir backend entegrasyonu eklemek
-
----
+## Ekran Görüntüleri 
 
 # Durum
 
