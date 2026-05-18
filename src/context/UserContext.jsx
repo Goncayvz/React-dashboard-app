@@ -9,10 +9,10 @@ export function UserProvider({ children }) {
     return savedUser
       ? JSON.parse(savedUser)
       : {
-          name: "Kullanıcı",
+          name: "Kullanıcı (User)",
           email: "user@example.com",
           phone: "+90 XXX XXXX",
-          bio: "Ben bir görev yöneticisiyim",
+          bio: "Ben bir görev yöneticisiyim (I am a task manager)",
           avatar: "🧑",
           birthDate: "2000-01-01",
           jobTitle: "Product Designer",

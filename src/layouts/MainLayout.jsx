@@ -14,7 +14,7 @@ function MainLayout() {
           onClick={() => setSidebarOpen(true)}
           className="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm font-semibold text-white hover:bg-white/10"
         >
-          Menü
+          Menü (Menu)
         </button>
         <span className="font-bold text-blue-400">TaskFlow</span>
         <div className="w-[64px]" aria-hidden="true" />

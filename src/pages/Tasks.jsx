@@ -109,25 +109,25 @@ function Tasks() {
       {isEditing && (
         <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center px-4">
           <div className="bg-zinc-900 p-6 rounded-lg w-[92vw] max-w-md border border-white/10">
-            <h2 className="text-xl mb-4 font-semibold">Görevi Düzenle</h2>
+            <h2 className="text-xl mb-4 font-semibold">Görevi Düzenle (Edit Task)</h2>
 
             <input
               className="w-full mb-3 p-3 rounded-lg bg-zinc-800 border border-zinc-700 text-white"
               value={editTitle}
               onChange={(e) => setEditTitle(e.target.value)}
-              placeholder="Başlık"
+              placeholder="Başlık (Title)"
             />
 
             <input
               className="w-full mb-4 p-3 rounded-lg bg-zinc-800 border border-zinc-700 text-white"
               value={editDesc}
               onChange={(e) => setEditDesc(e.target.value)}
-              placeholder="Açıklama"
+              placeholder="Açıklama (Description)"
             />
 
             <div className="flex flex-col sm:flex-row gap-2">
               <button onClick={updateTask} className="bg-green-500 px-4 py-2 rounded w-full sm:w-auto">
-                Kaydet
+                Kaydet (Save)
               </button>
 
               <button
@@ -137,7 +137,7 @@ function Tasks() {
                 }}
                 className="bg-red-500 px-4 py-2 rounded w-full sm:w-auto"
               >
-                İptal
+                İptal (Cancel)
               </button>
             </div>
           </div>

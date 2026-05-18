@@ -78,7 +78,7 @@ function Profile() {
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-6 sm:p-8">
-      <h1 className="mb-8 text-2xl font-bold sm:text-3xl">Kullanıcı Profili</h1>
+      <h1 className="mb-8 text-2xl font-bold sm:text-3xl">Kullanıcı Profili (User Profile)</h1>
 
       <div className="grid gap-6 lg:grid-cols-[1.4fr_0.9fr]">
         <div className="glass-card p-5 sm:p-8 rounded-3xl border border-white/10">
@@ -86,7 +86,7 @@ function Profile() {
             {user.avatar?.startsWith("data:image") ? (
               <img
                 src={user.avatar}
-                alt="Profil resmi"
+                alt="Profil resmi (Profile image)"
                 className="w-28 h-28 rounded-full object-cover border border-white/10"
               />
             ) : (
@@ -98,7 +98,7 @@ function Profile() {
             <div className="min-w-0 flex-1">
               <h2 className="break-words text-2xl font-bold sm:text-3xl">{user.name}</h2>
               <p className="text-blue-300 text-sm uppercase tracking-wide mb-2">
-                {user.jobTitle || "Görev tutkunu"}
+                {user.jobTitle || "Görev tutkunu (Task enthusiast)"}
               </p>
               <p className="break-words leading-7 text-zinc-300">{user.bio}</p>
             </div>
@@ -106,26 +106,26 @@ function Profile() {
 
           <div className="grid gap-4 mt-8 sm:grid-cols-2 xl:grid-cols-4">
             <div className="glass-card p-5 rounded-3xl border border-white/10">
-              <p className="text-zinc-400 text-sm">Tamamlanan Görevler</p>
+              <p className="text-zinc-400 text-sm">Tamamlanan Görevler (Completed Tasks)</p>
               <p className="text-3xl font-semibold mt-3">{completedTasks}</p>
             </div>
             <div className="glass-card p-5 rounded-3xl border border-white/10">
-              <p className="text-zinc-400 text-sm">Devam Edenler</p>
+              <p className="text-zinc-400 text-sm">Devam Edenler (In Progress)</p>
               <p className="text-3xl font-semibold mt-3">{inProgressTasks}</p>
             </div>
             <div className="glass-card p-5 rounded-3xl border border-white/10">
-              <p className="text-zinc-400 text-sm">Kazandığın Rozetler</p>
+              <p className="text-zinc-400 text-sm">Kazandığın Rozetler (Earned Badges)</p>
               <p className="text-3xl font-semibold mt-3">{badgeCount}</p>
             </div>
             <div className="glass-card p-5 rounded-3xl border border-white/10">
-              <p className="text-zinc-400 text-sm">Profil Tamamlanması</p>
+              <p className="text-zinc-400 text-sm">Profil Tamamlanması (Profile Completion)</p>
               <p className="text-3xl font-semibold mt-3">{profileCompletion}%</p>
             </div>
           </div>
 
           <div className="mt-8 glass-card p-5 rounded-3xl border border-white/10 bg-white/5">
             <div className="flex items-center justify-between mb-3">
-              <span className="text-sm text-zinc-400">Profil durumu</span>
+              <span className="text-sm text-zinc-400">Profil durumu (Profile status)</span>
               <span className="text-sm text-zinc-200 font-medium">{profileCompletion}%</span>
             </div>
             <div className="h-3 rounded-full bg-white/10 overflow-hidden">
@@ -140,16 +140,16 @@ function Profile() {
         <div className="glass-card p-5 sm:p-8 rounded-3xl border border-white/10">
           {!isEditing ? (
             <>
-              <h2 className="text-2xl font-bold mb-6">Profil Detayları</h2>
+              <h2 className="text-2xl font-bold mb-6">Profil Detayları (Profile Details)</h2>
 
               <div className="grid gap-5">
                 <div className="grid gap-2">
-                  <span className="text-zinc-400 text-sm">E-posta</span>
+                  <span className="text-zinc-400 text-sm">E-posta (Email)</span>
                   <p className="break-words text-white">{user.email}</p>
                 </div>
 
                 <div className="grid gap-2">
-                  <span className="text-zinc-400 text-sm">Telefon</span>
+                  <span className="text-zinc-400 text-sm">Telefon (Phone)</span>
                   <p className="break-words text-white">{user.phone}</p>
                 </div>
               </div>
@@ -161,16 +161,16 @@ function Profile() {
                 }}
                 className="mt-8 w-full bg-blue-500 hover:bg-blue-600 px-6 py-3 rounded-3xl"
               >
-                Profili Düzenle
+                Profili Düzenle (Edit Profile)
               </button>
             </>
           ) : (
             <>
-              <h2 className="text-2xl font-bold mb-6">Profili Düzenle</h2>
+              <h2 className="text-2xl font-bold mb-6">Profili Düzenle (Edit Profile)</h2>
 
               <div className="space-y-4">
                 <div>
-                  <label className="block text-zinc-400 text-sm mb-2">Ad</label>
+                  <label className="block text-zinc-400 text-sm mb-2">Ad (Name)</label>
                   <input
                     type="text"
                     name="name"
@@ -181,7 +181,7 @@ function Profile() {
                 </div>
 
                 <div>
-                  <label className="block text-zinc-400 text-sm mb-2">E-posta</label>
+                  <label className="block text-zinc-400 text-sm mb-2">E-posta (Email)</label>
                   <input
                     type="email"
                     name="email"
@@ -192,7 +192,7 @@ function Profile() {
                 </div>
 
                 <div>
-                  <label className="block text-zinc-400 text-sm mb-2">Telefon</label>
+                  <label className="block text-zinc-400 text-sm mb-2">Telefon (Phone)</label>
                   <input
                     type="tel"
                     name="phone"
@@ -203,7 +203,7 @@ function Profile() {
                 </div>
 
                 <div>
-                  <label className="block text-zinc-400 text-sm mb-2">Meslek</label>
+                  <label className="block text-zinc-400 text-sm mb-2">Meslek (Job Title)</label>
                   <input
                     type="text"
                     name="jobTitle"
@@ -225,7 +225,7 @@ function Profile() {
                 </div>
 
                 <div className="grid gap-2">
-                  <label className="block text-zinc-400 text-sm mb-2">Avatar Seçimi</label>
+                  <label className="block text-zinc-400 text-sm mb-2">Avatar Seçimi (Avatar Selection)</label>
                   <div className="flex flex-wrap gap-2">
                     {avatarOptions.map((avatar) => (
                       <button
@@ -245,7 +245,7 @@ function Profile() {
                 </div>
 
                 <div>
-                  <label className="block text-zinc-400 text-sm mb-2">Profil Fotoğrafı Yükle</label>
+                  <label className="block text-zinc-400 text-sm mb-2">Profil Fotoğrafı Yükle (Upload Profile Photo)</label>
                   <input
                     type="file"
                     accept="image/*"
@@ -255,7 +255,7 @@ function Profile() {
                   {formData.avatar?.startsWith("data:image") && (
                     <img
                       src={formData.avatar}
-                      alt="Avatar önizleme"
+                      alt="Avatar önizleme (Avatar preview)"
                       className="mt-3 w-24 h-24 rounded-full object-cover border border-white/10"
                     />
                   )}
@@ -268,13 +268,13 @@ function Profile() {
                   onClick={handleSave}
                   className="flex-1 bg-green-500 hover:bg-green-600 px-6 py-3 rounded-3xl"
                 >
-                  Kaydet
+                  Kaydet (Save)
                 </button>
                 <button
                   onClick={handleCancel}
                   className="flex-1 bg-red-500 hover:bg-red-600 px-6 py-3 rounded-3xl"
                 >
-                  İptal
+                  İptal (Cancel)
                 </button>
               </div>
             </>

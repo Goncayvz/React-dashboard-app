@@ -16,7 +16,7 @@ function Sidebar({ mobileOpen = false, onClose }) {
   useEffect(() => {
     // sadece sayım artışında bildirim bas
     if (badgeCount > prevBadgeCountRef.current) {
-      addNotification(`Rozetler: ${badgeCount}`, "info", 3500);
+      addNotification(`Rozetler (Badges): ${badgeCount}`, "info", 3500);
     }
     prevBadgeCountRef.current = badgeCount;
   }, [badgeCount, addNotification]);
@@ -38,9 +38,9 @@ function Sidebar({ mobileOpen = false, onClose }) {
   const navItems = [
     { to: "/", label: "Dashboard", icon: "🏠" },
     { to: "/tasks", label: "Tasks", icon: "✅" },
-    { to: "/focus", label: "Odaklanma", icon: "🎯" },
+    { to: "/focus", label: "Focus", icon: "🎯" },
     { to: "/analytics", label: "Analytics", icon: "📊" },
-    { to: "/badges", label: "Rozetler", icon: "🏅" }
+    { to: "/badges", label: "Badges", icon: "🏅" }
   ];
 
   const profileContent = (
@@ -72,7 +72,7 @@ function Sidebar({ mobileOpen = false, onClose }) {
         <button
           type="button"
           className="sm:hidden fixed inset-0 z-40 bg-black/50"
-          aria-label="Menüyü kapat"
+          aria-label="Menüyü kapat (Close menu)"
           onClick={() => onClose?.()}
         />
       )}
@@ -97,7 +97,7 @@ function Sidebar({ mobileOpen = false, onClose }) {
               type="button"
               onClick={() => onClose?.()}
               className="sm:hidden text-sm text-zinc-300 px-2 py-1 rounded-full border border-zinc-700 hover:bg-zinc-800"
-              title="Menüyü kapat"
+              title="Menüyü kapat (Close menu)"
             >
               ✕
             </button>
@@ -106,7 +106,7 @@ function Sidebar({ mobileOpen = false, onClose }) {
               type="button"
               onClick={() => setCollapsed((prev) => !prev)}
               className="hidden sm:inline-flex text-sm text-zinc-400 px-2 py-1 rounded-full border border-zinc-700 hover:bg-zinc-800"
-              title={collapsed ? "Menüyü aç" : "Menüyü kapat"}
+              title={collapsed ? "Menüyü aç (Open menu)" : "Menüyü kapat (Close menu)"}
             >
               {collapsed ? "➡" : "⬅"}
             </button>
@@ -130,14 +130,14 @@ function Sidebar({ mobileOpen = false, onClose }) {
             <div className="mt-4 text-sm text-zinc-300">
               <div className="flex min-w-0 flex-col gap-3">
                 <p className="break-words leading-5 text-zinc-300">
-                  {user.jobTitle || "Görev tutkunuz"}
+                  {user.jobTitle || "Görev tutkunuz (Task enthusiast)"}
                 </p>
                 <NavLink
                   to="/profile"
                   onClick={() => onClose?.()}
                   className="inline-flex min-h-10 w-full items-center justify-center rounded-lg border border-blue-400/30 bg-blue-500/10 px-3 py-2 font-medium text-blue-200 transition hover:border-blue-300 hover:bg-blue-500/20"
                 >
-                  Profili aç
+                  Profili aç (Open profile)
                 </NavLink>
               </div>
             </div>
@@ -165,8 +165,8 @@ function Sidebar({ mobileOpen = false, onClose }) {
               {item.to === "/badges" && badgeCount > 0 && !collapsed && (
                 <span
                   className="ml-auto bg-yellow-500 text-black text-xs font-bold px-2 py-1 rounded-full select-none"
-                  aria-label={`Rozet sayısı: ${badgeCount}`}
-                  title={`Rozet sayısı: ${badgeCount}`}
+                  aria-label={`Rozet sayısı (Badge count): ${badgeCount}`}
+                  title={`Rozet sayısı (Badge count): ${badgeCount}`}
                 >
                   {badgeCount}
                 </span>
@@ -175,8 +175,8 @@ function Sidebar({ mobileOpen = false, onClose }) {
               {item.to === "/badges" && badgeCount > 0 && collapsed && (
                 <span
                   className="ml-auto bg-yellow-500 text-black text-[10px] font-bold px-2 py-1 rounded-full select-none"
-                  aria-label={`Rozet sayısı: ${badgeCount}`}
-                  title={`Rozet sayısı: ${badgeCount}`}
+                  aria-label={`Rozet sayısı (Badge count): ${badgeCount}`}
+                  title={`Rozet sayısı (Badge count): ${badgeCount}`}
                 >
                   {badgeCount}
                 </span>

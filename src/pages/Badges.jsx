@@ -16,18 +16,18 @@ function Badges() {
 
 
   const categories = {
-    completions: { name: "🎯 Tamamlama Seviyeleri", color: "from-blue-900 to-blue-800" },
-    speed: { name: "⚡ Hız ve Verimlilik", color: "from-yellow-900 to-yellow-800" },
-    daily: { name: "☀️ Günlük Zorluklar", color: "from-orange-900 to-orange-800" },
-    created: { name: "📋 Yaratıcılık", color: "from-purple-900 to-purple-800" },
-    streak: { name: "🔥 Tutarlılık", color: "from-red-900 to-red-800" },
-    cleanup: { name: "✨ Temizlik", color: "from-green-900 to-green-800" },
-    specific: { name: "🎨 Özel Görevler", color: "from-pink-900 to-pink-800" },
-    perfect: { name: "💯 Mükemmellik", color: "from-indigo-900 to-indigo-800" },
-    ontime: { name: "⏰ Zaman Yönetimi", color: "from-cyan-900 to-cyan-800" },
-    detail: { name: "🔍 Dikkat", color: "from-slate-900 to-slate-800" },
-    social: { name: "🦋 Sosyal", color: "from-fuchsia-900 to-fuchsia-800" },
-    setup: { name: "🚀 Başlangıç", color: "from-lime-900 to-lime-800" }
+    completions: { name: "🎯 Tamamlama Seviyeleri (Completion Levels)", color: "from-blue-900 to-blue-800" },
+    speed: { name: "⚡ Hız ve Verimlilik (Speed and Efficiency)", color: "from-yellow-900 to-yellow-800" },
+    daily: { name: "☀️ Günlük Zorluklar (Daily Challenges)", color: "from-orange-900 to-orange-800" },
+    created: { name: "📋 Yaratıcılık (Creativity)", color: "from-purple-900 to-purple-800" },
+    streak: { name: "🔥 Tutarlılık (Consistency)", color: "from-red-900 to-red-800" },
+    cleanup: { name: "✨ Temizlik (Cleanup)", color: "from-green-900 to-green-800" },
+    specific: { name: "🎨 Özel Görevler (Special Tasks)", color: "from-pink-900 to-pink-800" },
+    perfect: { name: "💯 Mükemmellik (Perfection)", color: "from-indigo-900 to-indigo-800" },
+    ontime: { name: "⏰ Zaman Yönetimi (Time Management)", color: "from-cyan-900 to-cyan-800" },
+    detail: { name: "🔍 Dikkat (Attention)", color: "from-slate-900 to-slate-800" },
+    social: { name: "🦋 Sosyal (Social)", color: "from-fuchsia-900 to-fuchsia-800" },
+    setup: { name: "🚀 Başlangıç (Start)", color: "from-lime-900 to-lime-800" }
   }
 
   const getBadgesByCategory = (categoryKey) => {
@@ -41,9 +41,9 @@ function Badges() {
   return (
     <div className="px-4 py-6 sm:p-8">
       <div className="mb-8" onClick={clearNotifications}>
-        <h1 className="mb-2 text-3xl font-bold sm:text-4xl">🏆 Rozetler</h1>
+        <h1 className="mb-2 text-3xl font-bold sm:text-4xl">🏆 Rozetler (Badges)</h1>
         <p className="text-zinc-400">
-          Kazanılan:{" "}
+          Kazanılan (Earned):{" "}
           <span className="text-yellow-400 font-bold">{earnedBadges.length}</span> / {BADGES.length}
         </p>
       </div>
@@ -54,7 +54,7 @@ function Badges() {
           className="mb-8 rounded-lg border border-yellow-700 bg-gradient-to-r from-yellow-900/20 to-yellow-800/20 p-4 sm:p-6"
           onClick={clearNotifications}
         >
-          <h2 className="text-xl font-bold text-yellow-400 mb-4">⭐ Kazanılan Rozetler</h2>
+          <h2 className="text-xl font-bold text-yellow-400 mb-4">⭐ Kazanılan Rozetler (Earned Badges)</h2>
           <div className="flex flex-wrap gap-3">
             {earnedBadges.map((badge) => (
               <div
@@ -120,11 +120,11 @@ function Badges() {
       {/* İstatistikler */}
       <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="bg-zinc-900 p-6 rounded-lg border border-zinc-800">
-          <h3 className="text-zinc-400 mb-2">Toplam Rozetler</h3>
+          <h3 className="text-zinc-400 mb-2">Toplam Rozetler (Total Badges)</h3>
           <p className="text-4xl font-bold text-yellow-400">{BADGES.length}</p>
         </div>
         <div className="bg-zinc-900 p-6 rounded-lg border border-zinc-800">
-          <h3 className="text-zinc-400 mb-2">Kalan Rozetler</h3>
+          <h3 className="text-zinc-400 mb-2">Kalan Rozetler (Remaining Badges)</h3>
           <p className="text-4xl font-bold text-blue-400">{BADGES.length - earnedBadges.length}</p>
         </div>
       </div>
