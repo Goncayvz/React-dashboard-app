@@ -229,15 +229,6 @@ TaskFlow follows a modern SaaS dashboard design philosophy.
 
 
 
-Recommended screenshots:
-
-- Dashboard Overview
-- Focus Mode
-- Analytics Page
-- Mobile Responsive View
-- Task Management
-- Badge System
-
 ---
 
 # 📦 Project Status
