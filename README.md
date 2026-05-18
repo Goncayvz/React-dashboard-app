@@ -1,81 +1,118 @@
 # TaskFlow
 
-TaskFlow, görev yönetimi, odaklanma zamanlayıcısı, rozet sistemi, profil yönetimi ve analitik ekranlarını bir araya getiren React tabanlı bir üretkenlik uygulamasıdır. Proje; React Router, Context API, localStorage kalıcılığı, responsive arayüz ve temel unit test örnekleriyle modern frontend pratiklerini göstermek için geliştirilmiştir.
+![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
+![Vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
+![React Router](https://img.shields.io/badge/React_Router-CA4245?style=for-the-badge&logo=react-router&logoColor=white)
+![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
+![Recharts](https://img.shields.io/badge/Recharts-FF6384?style=for-the-badge&logo=chartdotjs&logoColor=white)
+![Vitest](https://img.shields.io/badge/Vitest-6E9F18?style=for-the-badge&logo=vitest&logoColor=white)
+![ESLint](https://img.shields.io/badge/ESLint-4B32C3?style=for-the-badge&logo=eslint&logoColor=white)
 
-## Özellikler
+React tabanlı modern bir üretkenlik ve görev yönetimi uygulaması.  
+TaskFlow; görev takibi, odaklanma zamanlayıcısı, Pomodoro geçmişi, rozet sistemi, profil yönetimi ve analitik ekranlarını tek bir arayüzde birleştirir.
+
+---
+
+# Özellikler
 
 - Görev ekleme, düzenleme, silme ve durum değiştirme
-- Dashboard üzerinden görevlerin hızlı takibi
+- Dashboard üzerinden görevleri hızlı takip etme
 - Odaklanma modu ve Pomodoro zamanlayıcısı
-- Tamamlanan Pomodoro oturumları geçmişi
+- Tamamlanan Pomodoro oturumlarını geçmişte görüntüleme
 - Bildirim sesleri ve arka plan sesi ayarları
 - YouTube veya direkt audio URL ile arka plan sesi kullanımı
-- Rozet/kazanım sistemi
+- Rozet ve kazanım sistemi
 - Profil bilgileri ve avatar yönetimi
 - Analitik ekranı ve görev istatistikleri
-- localStorage ile kalıcı kullanıcı, görev, rozet ve odak ayarları
+- localStorage ile kullanıcı, görev, rozet ve odak ayarlarını kalıcı saklama
 - Responsive sidebar ve mobil menü desteği
-- Vitest ile temel helper ve context mantığı testleri
+- Vitest ile helper ve context mantığı için temel unit testler
 
-## Teknolojiler
+---
 
-- React
-- Vite
-- React Router
-- Context API
-- Tailwind CSS
-- Recharts
-- Vitest
-- ESLint
+# Kullanılan Teknolojiler
 
-## Kurulum
+| Katman | Teknoloji |
+|--------|-----------|
+| Frontend | React, Vite, Tailwind CSS |
+| Routing | React Router |
+| State Management | Context API |
+| Grafikler | Recharts |
+| Kalıcılık | localStorage |
+| Test | Vitest |
+| Kod Kalitesi | ESLint |
 
-Projeyi yerelde çalıştırmak için:
+---
+
+# Proje Yapısı
+
+```bash
+taskflow/
+├── public/
+├── src/
+│   ├── components/
+│   ├── context/
+│   ├── data/
+│   ├── layouts/
+│   ├── pages/
+│   ├── styles/
+│   └── utils/
+│
+├── index.html
+├── package.json
+├── vite.config.js
+└── README.md
+```
+
+---
+
+# Kurulum
+
+## 1. Projeyi Klonla
+
+```bash
+git clone <repository-url>
+cd taskflow
+```
+
+---
+
+## 2. Bağımlılıkları Yükle
 
 ```bash
 npm install
+```
+
+---
+
+## 3. Geliştirme Sunucusunu Başlat
+
+```bash
 npm run dev
 ```
 
-Vite geliştirme sunucusu varsayılan olarak şu adreste açılır:
+Uygulama varsayılan olarak şu adreste çalışır:
 
-```text
+```bash
 http://localhost:5173
 ```
 
-## Komutlar
+---
 
-```bash
-npm run dev
-```
+# Komutlar
 
-Geliştirme sunucusunu başlatır.
+| Komut | Açıklama |
+|-------|----------|
+| `npm run dev` | Geliştirme sunucusunu başlatır |
+| `npm run build` | Production build oluşturur |
+| `npm run preview` | Production build'i yerelde önizler |
+| `npm run lint` | ESLint kontrollerini çalıştırır |
+| `npm test` | Vitest testlerini çalıştırır |
 
-```bash
-npm run build
-```
+---
 
-Production build oluşturur.
-
-```bash
-npm run preview
-```
-
-Oluşturulan production build'i yerelde önizler.
-
-```bash
-npm run lint
-```
-
-ESLint kontrollerini çalıştırır.
-
-```bash
-npm test
-```
-
-Vitest testlerini çalıştırır.
-
-## Testler
+# Testler
 
 Projede temel unit testler bulunur:
 
@@ -85,47 +122,54 @@ Projede temel unit testler bulunur:
 
 Test dosyaları:
 
-```text
+```bash
 src/context/BadgeContext.test.jsx
 src/context/NotificationContext.test.jsx
 src/pages/Focus.test.jsx
 ```
 
-## Proje Yapısı
+---
 
-```text
-src/
-  components/      Ortak UI bileşenleri
-  context/         User, Badge ve Notification context yapıları
-  data/            Başlangıç verileri
-  layouts/         Ana layout yapısı
-  pages/           Dashboard, Tasks, Focus, Analytics, Profile, Badges sayfaları
-  styles/          Sayfa bazlı CSS dosyaları
-  utils/           Test edilebilir yardımcı fonksiyonlar
-```
+# Öne Çıkan Teknik Noktalar
 
-## Öne Çıkan Teknik Noktalar
-
-- Global state için Context API kullanıldı.
-- Kullanıcı ve uygulama ayarları localStorage ile saklanıyor.
-- Focus sayfasındaki URL/time helper'ları component dışına alınarak test edilebilir hale getirildi.
+- Global state yönetimi için Context API kullanıldı.
+- Kullanıcı bilgileri ve uygulama ayarları localStorage ile saklanıyor.
+- Focus sayfasındaki URL ve zaman helper'ları component dışına alınarak test edilebilir hale getirildi.
 - Rozet hesaplama mantığı saf helper fonksiyonuna ayrıldı.
 - Bildirim liste işlemleri küçük helper fonksiyonlarıyla test edildi.
 - Uygulama route yapısı `MainLayout` altında merkezi olarak yönetiliyor.
+- Responsive yapı sayesinde masaüstü ve mobil ekranlarda kullanılabilir arayüz sunuluyor.
 
-## Geliştirme Notları
+---
 
-Bu proje öğrenme ve portfolyo amacıyla geliştirilmiştir. Mevcut yapı çalışır durumdadır; daha ileri seviye geliştirme için şu adımlar değerlendirilebilir:
+# Ekranlar
+
+Uygulamada yer alan temel ekranlar:
+
+- Dashboard
+- Tasks
+- Focus
+- Analytics
+- Profile
+- Badges
+
+---
+
+# Geliştirme Notları
+
+Bu proje öğrenme ve portföy amacıyla geliştirilmiştir. Mevcut yapı çalışır durumdadır; daha ileri geliştirmeler için şu adımlar değerlendirilebilir:
 
 - Focus sayfasını daha küçük component'lara bölmek
 - Görev işlemleri için ayrı custom hook yazmak
 - Daha kapsamlı component testleri eklemek
 - TypeScript'e geçmek
-- localStorage yerine gerçek bir backend veya Firebase/Supabase entegrasyonu eklemek
+- localStorage yerine Firebase, Supabase veya özel bir backend entegrasyonu eklemek
 
-## Durum
+---
 
-Son kontroller:
+# Durum
+
+Son kontroller için kullanılan komutlar:
 
 ```bash
 npm test
@@ -133,4 +177,10 @@ npm run lint
 npm run build
 ```
 
-Bu komutlar başarıyla çalışacak şekilde proje yapılandırılmıştır.
+Proje bu komutlar başarıyla çalışacak şekilde yapılandırılmıştır.
+
+---
+
+# Not
+
+TaskFlow, modern frontend geliştirme pratiklerini göstermek amacıyla hazırlanmış bir portföy projesidir. React ekosistemi, state yönetimi, test edilebilir helper yapısı ve responsive UI yaklaşımı üzerine pratik sunar.
