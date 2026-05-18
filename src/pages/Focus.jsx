@@ -35,51 +35,6 @@ const SOUND_TYPES = {
   none: { label: "Sessiz", key: "none" }
 }
 
-const AMBIENT_SOUNDS = {
-  rain: {
-    label: "🌧️ Yağmur",
-    key: "rain",
-    forBreak: true,
-    forWork: true,
-    url: "https://cdn.pixabay.com/download/audio/2024/01/15/audio_f87f76cdc5.mp3"
-  },
-  stream: {
-    label: "💧 Dere",
-    key: "stream",
-    forBreak: true,
-    forWork: true,
-    url: "https://cdn.pixabay.com/download/audio/2023/04/12/audio_8ddf3e1f1c.mp3"
-  },
-  forest: {
-    label: "🌲 Orman",
-    key: "forest",
-    forBreak: false,
-    forWork: true,
-    url: "https://cdn.pixabay.com/download/audio/2023/08/03/audio_ed5d4d63bb.mp3"
-  },
-  wind: {
-    label: "💨 Rüzgar",
-    key: "wind",
-    forBreak: false,
-    forWork: true,
-    url: "https://cdn.pixabay.com/download/audio/2023/06/15/audio_5f5d2e4b1a.mp3"
-  },
-  ocean: {
-    label: "🌊 Okyanus",
-    key: "ocean",
-    forBreak: true,
-    forWork: true,
-    url: "https://cdn.pixabay.com/download/audio/2023/05/20/audio_6c1e4f2a3d.mp3"
-  },
-  none: {
-    label: "🔇 Hiçbiri",
-    key: "none",
-    forBreak: true,
-    forWork: true,
-    url: null
-  }
-}
-
 const formatCompletedTime = (dateString) => {
   try {
     return new Intl.DateTimeFormat("tr-TR", {
@@ -112,7 +67,6 @@ const defaultSettings = {
   secondsLeft: 25 * 60,
   cycleCount: 0,
   soundType: "break",
-  ambientSound: "rain",
   ambientVolume: 0.3,
   bgSoundOn: true,
 
@@ -155,7 +109,6 @@ function Focus() {
   const [customShortBreak, setCustomShortBreak] = useState(initialSettings.shortBreakMinutes)
   const [customLongBreak, setCustomLongBreak] = useState(initialSettings.longBreakMinutes)
   const [soundType, setSoundType] = useState(initialSettings.soundType)
-  const [ambientSound, setAmbientSound] = useState(initialSettings.ambientSound)
   const [ambientVolume, setAmbientVolume] = useState(initialSettings.ambientVolume)
   const [soundOn, setSoundOn] = useState(true)
   const [bgSoundOn, setBgSoundOn] = useState(initialSettings.bgSoundOn)
@@ -170,6 +123,7 @@ function Focus() {
   const ytReadyRef = useRef(false)
   const ytPlayerBuiltForUrlRef = useRef("")
   const ytVolumeRef = useRef(ambientVolume)
+  const shouldPlayYoutubeRef = useRef(false)
 
   useEffect(() => {
     localStorage.setItem(
@@ -180,13 +134,12 @@ function Focus() {
         shortBreakMinutes,
         longBreakMinutes,
         soundType,
-        ambientSound,
         ambientVolume,
         bgSoundOn,
         youtubeUrl
       })
     )
-  }, [mode, workMinutes, shortBreakMinutes, longBreakMinutes, soundType, ambientSound, ambientVolume, bgSoundOn, youtubeUrl])
+  }, [mode, workMinutes, shortBreakMinutes, longBreakMinutes, soundType, ambientVolume, bgSoundOn, youtubeUrl])
 
   useEffect(() => {
     localStorage.setItem("focus-completed-pomodoros", JSON.stringify(completedPomodoros))
@@ -203,17 +156,38 @@ function Focus() {
   }, [youtubeUrl])
 
   const youtubeIframeKey = useMemo(() => {
-    return `${isRunning ? "run" : "stop"}:${bgSoundOn ? "bg1" : "bg0"}:${isWorkSession ? "work" : "break"}:${youtubeEmbedUrl}`
-  }, [bgSoundOn, isRunning, isWorkSession, youtubeEmbedUrl])
+    return youtubeEmbedUrl || "empty-youtube-url"
+  }, [youtubeEmbedUrl])
 
   const shouldPlayYoutube = isWorkSession && isRunning && bgSoundOn && !!(youtubeEmbedUrl && youtubeEmbedUrl.trim())
+
+  useEffect(() => {
+    shouldPlayYoutubeRef.current = shouldPlayYoutube
+  }, [shouldPlayYoutube])
+
+  const setYoutubeVolume = useCallback((volume) => {
+    const player = ytPlayerRef.current
+    if (!player || typeof player.setVolume !== "function") return
+
+    try {
+      player.setVolume(Math.round(Math.max(0, Math.min(1, volume)) * 100))
+    } catch {
+      // ignore
+    }
+  }, [])
 
   // YouTube IFrame API yükleme
   useEffect(() => {
     if (typeof window === "undefined") return
 
-    if (!window.YT) {
+    if (window.YT?.Player) {
+      ytReadyRef.current = true
+      return
+    }
+
+    if (!document.getElementById("youtube-iframe-api")) {
       const tag = document.createElement("script")
+      tag.id = "youtube-iframe-api"
       tag.src = "https://www.youtube.com/iframe_api"
       const firstScriptTag = document.getElementsByTagName("script")[0]
       firstScriptTag.parentNode.insertBefore(tag, firstScriptTag)
@@ -221,74 +195,79 @@ function Focus() {
 
     window.onYouTubeIframeAPIReady = () => {
       ytReadyRef.current = true
+    }
+  }, [])
 
-      // iframe'imiz mount olduysa player oluştur
-      const el = document.getElementById("youtube-ambient-iframe")
-      if (el && el.tagName === "IFRAME" && youtubeEmbedUrl && ytPlayerRef.current == null) {
-        try {
-          ytPlayerRef.current = new window.YT.Player(el, {
-            events: {
-              onReady: () => {
-                try {
-                  ytPlayerRef.current?.setVolume(Math.round(ytVolumeRef.current * 100))
-                } catch {
-                  // ignore
-                }
-              }
-            }
-          })
-        } catch {
-          // ignore
-        }
+  useEffect(() => {
+    if (typeof window === "undefined") return
+
+    if (ytPlayerRef.current && typeof ytPlayerRef.current.destroy === "function") {
+      try {
+        ytPlayerRef.current.destroy()
+      } catch {
+        // ignore
       }
     }
-  }, [youtubeEmbedUrl])
+
+    ytPlayerRef.current = null
+    ytPlayerBuiltForUrlRef.current = ""
+
+    if (!youtubeEmbedUrl) return
+
+    const buildPlayer = () => {
+      const el = document.getElementById("youtube-ambient-iframe")
+      if (!el || el.tagName !== "IFRAME" || !window.YT?.Player || ytPlayerRef.current) return
+
+      try {
+        ytPlayerRef.current = new window.YT.Player(el, {
+          events: {
+            onReady: (event) => {
+              ytPlayerBuiltForUrlRef.current = youtubeEmbedUrl
+              setYoutubeVolume(ytVolumeRef.current)
+
+              try {
+                if (shouldPlayYoutubeRef.current) {
+                  event.target.playVideo()
+                } else {
+                  event.target.pauseVideo()
+                }
+              } catch {
+                // ignore
+              }
+            }
+          }
+        })
+      } catch {
+        // ignore
+      }
+    }
+
+    if (window.YT?.Player) {
+      buildPlayer()
+      return
+    }
+
+    const existingReady = window.onYouTubeIframeAPIReady
+    window.onYouTubeIframeAPIReady = () => {
+      existingReady?.()
+      ytReadyRef.current = true
+      buildPlayer()
+    }
+  }, [setYoutubeVolume, youtubeEmbedUrl])
 
   // Volume'ü YouTube player'a bas
   useEffect(() => {
     ytVolumeRef.current = ambientVolume
-
-    if (!ytPlayerRef.current) return
-
-    try {
-      ytPlayerRef.current.setVolume(Math.round(ambientVolume * 100))
-    } catch {
-      // ignore
-    }
-  }, [ambientVolume, shouldPlayYoutube])
+    setYoutubeVolume(ambientVolume)
+  }, [ambientVolume, setYoutubeVolume])
 
   // Timer start/stop'a göre YouTube play/pause
   useEffect(() => {
-    if (!ytReadyRef.current) return
-
     if (!youtubeEmbedUrl || !youtubeEmbedUrl.trim()) return
-
-    // player bir kez url için kurulsun (remount anahtarı olsa da korunur)
-    if (!ytPlayerRef.current) {
-      const el = document.getElementById("youtube-ambient-iframe")
-      if (el && el.tagName === "IFRAME") {
-        try {
-          ytPlayerRef.current = new window.YT.Player(el, {
-            events: {
-              onReady: () => {
-                try {
-                  ytPlayerRef.current?.setVolume(Math.round(ambientVolume * 100))
-                } catch {
-                  // ignore
-                }
-              }
-            }
-          })
-        } catch {
-          // ignore
-        }
-      }
-    }
 
     if (!ytPlayerRef.current) return
 
     if (shouldPlayYoutube && (ytPlayerBuiltForUrlRef.current !== youtubeEmbedUrl)) {
-      // yeni url geldiyse tekrar başlat
       ytPlayerBuiltForUrlRef.current = youtubeEmbedUrl
     }
 
@@ -301,7 +280,7 @@ function Focus() {
     } catch {
       // ignore
     }
-  }, [shouldPlayYoutube, youtubeEmbedUrl, ambientVolume])
+  }, [shouldPlayYoutube, youtubeEmbedUrl])
 
   useEffect(() => {
     if (!isRunning || !bgSoundOn) {
@@ -314,14 +293,14 @@ function Focus() {
       // YouTube mp3 yerine iframe/player tarafından yönetilir
       stopAmbientSound()
     } else {
-      playAmbientSound(ambientSound)
+      playAmbientSound()
     }
 
     return () => {
       if (!isRunning) stopAmbientSound()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isRunning, bgSoundOn, youtubeEmbedUrl, directAudioUrl, ambientSound, isWorkSession])
+  }, [isRunning, bgSoundOn, youtubeEmbedUrl, directAudioUrl, isWorkSession])
 
   useEffect(() => {
     if (typeof window === "undefined") return
@@ -555,14 +534,14 @@ function Focus() {
 
   useEffect(() => {
     if (!ambientAudioRef.current) return
-    if (!ambientSound) return
     if (youtubeEmbedUrl && youtubeEmbedUrl.trim()) return
+    if (!directAudioUrl) return
 
     const targetVolume = Math.max(0, Math.min(1, ambientVolume))
     smoothSetAmbientVolume(targetVolume)
-  }, [ambientVolume, isRunning, ambientSound, youtubeEmbedUrl, directAudioUrl, smoothSetAmbientVolume])
+  }, [ambientVolume, isRunning, youtubeEmbedUrl, directAudioUrl, smoothSetAmbientVolume])
 
-  function playAmbientSound(soundKey) {
+  function playAmbientSound() {
     if (typeof window === "undefined") {
       stopAmbientSound()
       return
@@ -573,9 +552,7 @@ function Focus() {
       return
     }
 
-    const sound = AMBIENT_SOUNDS[soundKey]
-    const soundUrl = directAudioUrl || sound?.url
-    if ((!directAudioUrl && soundKey === "none") || !soundUrl) {
+    if (!directAudioUrl) {
       stopAmbientSound()
       return
     }
@@ -586,8 +563,8 @@ function Focus() {
         ambientAudioRef.current.loop = true
       }
 
-      if (ambientAudioRef.current.src !== soundUrl) {
-        ambientAudioRef.current.src = soundUrl
+      if (ambientAudioRef.current.src !== directAudioUrl) {
+        ambientAudioRef.current.src = directAudioUrl
       }
 
       const targetVolume = Math.max(0, Math.min(1, ambientVolume))
@@ -663,7 +640,7 @@ function Focus() {
         key={youtubeIframeKey}
         width="0"
         height="0"
-        src={shouldPlayYoutube ? youtubeEmbedUrl : ""}
+        src={youtubeEmbedUrl || ""}
         title="YouTube Ambient"
         allow="autoplay; encrypted-media"
         referrerPolicy="strict-origin-when-cross-origin"
@@ -947,26 +924,6 @@ function Focus() {
             <div className="border-t border-white/10 pt-6 mt-6">
               <h4 className="text-lg font-semibold mb-3">Arka Plan Sesi</h4>
 
-              <label className="block mb-4">
-                <span className="text-sm text-zinc-200">Hazır ses seç</span>
-                <div className="mt-2 grid grid-cols-2 gap-2">
-                  {Object.values(AMBIENT_SOUNDS).map((sound) => (
-                    <button
-                      key={sound.key}
-                      type="button"
-                      onClick={() => setAmbientSound(sound.key)}
-                      className={`rounded-lg px-3 py-2 text-xs font-semibold transition ${
-                        ambientSound === sound.key
-                          ? "bg-blue-500 text-white"
-                          : "bg-zinc-800 text-zinc-200 hover:bg-zinc-700"
-                      }`}
-                    >
-                      {sound.label}
-                    </button>
-                  ))}
-                </div>
-              </label>
-
               <div className="mb-4">
                 <span className="text-sm text-zinc-200 mb-2 block">Kendi ses URL’in (mp3/aac direkt link)</span>
                 <input
@@ -1019,7 +976,12 @@ function Focus() {
                       return
                     }
 
-                    playAmbientSound(ambientSound)
+                    if (!directAudioUrl) {
+                      addNotification("Lütfen önce direkt audio URL veya YouTube linki gir.", "warning", 3000)
+                      return
+                    }
+
+                    playAmbientSound()
                   }}
                   className="rounded-lg bg-blue-500/20 px-4 py-2 text-sm font-semibold text-blue-200 hover:bg-blue-500/30"
                 >
@@ -1034,9 +996,12 @@ function Focus() {
                 </button>
               </div>
 
-              <label className="block mt-4">
-                <span className="text-sm text-zinc-200 mb-2 block">
-                  Ses seviyesi: {Math.round(ambientVolume * 100)}%
+              <label className="mt-5 block rounded-2xl border border-white/10 bg-white/5 p-4">
+                <span className="mb-3 flex items-center justify-between gap-3 text-sm text-zinc-200">
+                  <span>Ses seviyesi</span>
+                  <span className="rounded-full bg-zinc-900 px-3 py-1 font-semibold text-blue-200">
+                    {Math.round(ambientVolume * 100)}%
+                  </span>
                 </span>
                 <input
                   type="range"
@@ -1045,7 +1010,7 @@ function Focus() {
                   step="0.05"
                   value={ambientVolume}
                   onChange={(e) => setAmbientVolume(parseFloat(e.target.value))}
-                  className="w-full h-2 bg-zinc-700 rounded-lg appearance-none cursor-pointer"
+                  className="focus-volume-slider"
                 />
               </label>
             </div>

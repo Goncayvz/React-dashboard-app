@@ -14,7 +14,7 @@ export const getYoutubeEmbedUrl = (url) => {
 
     if (!videoId) return ""
 
-    return `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=0&loop=1&playlist=${videoId}&controls=1&modestbranding=1&enablejsapi=1`
+    return `https://www.youtube.com/embed/${videoId}?autoplay=0&mute=0&loop=1&playlist=${videoId}&controls=1&modestbranding=1&enablejsapi=1`
   } catch {
     return ""
   }
