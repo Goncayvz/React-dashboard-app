@@ -247,8 +247,7 @@ Project is configured for production-ready builds.
 
 Watch the project walkthrough on YouTube:
 
-[▶️ Watch Demo Video]:(https://youtu.be/ASDV8gDI234)
----
+▶️ Watch Demo Video : https://youtu.be/ASDV8gDI234
 
 # 🇹🇷 Türkçe Özet
 
