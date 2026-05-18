@@ -808,7 +808,7 @@ function Focus() {
               <button
                 type="button"
                 onClick={handleCustomSave}
-                className="rounded-2xl border border-emerald-500 bg-emerald-500/10 px-6 py-3 text-emerald-200 hover:bg-emerald-500/20"
+                className="flex-1 rounded-2xl border border-emerald-500 bg-emerald-500/10 px-6 py-3 text-emerald-200 hover:bg-emerald-500/20 sm:flex-none"
               >
                 Ayarları Kaydet
               </button>
@@ -844,7 +844,7 @@ function Focus() {
                   {completedPomodoros.map((pomodoro, index) => (
                     <div
                       key={pomodoro.id}
-                      className="flex items-center justify-between gap-4 rounded-2xl border border-white/10 bg-white/5 px-4 py-3"
+                      className="flex flex-col gap-3 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4"
                     >
                       <div className="flex min-w-0 items-center gap-3">
                         <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-blue-500/20 text-sm font-bold text-blue-200">
@@ -869,7 +869,7 @@ function Focus() {
             </div>
           </section>
 
-          <section className="glass-card p-8 rounded-3xl border border-white/10 shadow-2xl">
+          <section className="glass-card rounded-3xl border border-white/10 p-5 shadow-2xl sm:p-8">
             <h3 className="text-2xl font-semibold mb-4">Özelleştirilebilir Süreler</h3>
             <p className="text-zinc-400 mb-6">Kendi çalışma ve mola sürelerini gir.</p>
 
@@ -976,7 +976,7 @@ function Focus() {
                   className="w-full mt-2 px-4 py-2 bg-zinc-800 border border-zinc-700 rounded-lg text-white outline-none focus:border-blue-400"
                 />
 
-                <div className="flex gap-2 mt-3">
+                <div className="mt-3 flex flex-col gap-2 sm:flex-row">
                   <button
                     type="button"
                     onClick={() => {
@@ -988,7 +988,7 @@ function Focus() {
                       setYoutubeUrl(v)
                       addNotification("YouTube/Link kaydedildi. Timer ile otomatik açılır.", "success", 3000)
                     }}
-                    className="bg-blue-500 hover:bg-blue-400 px-4 py-2 rounded-lg text-sm font-semibold"
+                    className="rounded-lg bg-blue-500 px-4 py-2 text-sm font-semibold hover:bg-blue-400"
                   >
                     Uygula
                   </button>
@@ -998,7 +998,7 @@ function Focus() {
                     onClick={() => {
                       setYoutubeUrl("")
                     }}
-                    className="bg-zinc-800 hover:bg-zinc-700 px-4 py-2 rounded-lg text-sm font-semibold"
+                    className="rounded-lg bg-zinc-800 px-4 py-2 text-sm font-semibold hover:bg-zinc-700"
                   >
                     Temizle
                   </button>

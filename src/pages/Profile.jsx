@@ -77,8 +77,8 @@ function Profile() {
   }
 
   return (
-    <div className="px-4 py-6 sm:p-8 max-w-6xl mx-auto">
-      <h1 className="text-3xl font-bold mb-8">Kullanıcı Profili</h1>
+    <div className="mx-auto max-w-6xl px-4 py-6 sm:p-8">
+      <h1 className="mb-8 text-2xl font-bold sm:text-3xl">Kullanıcı Profili</h1>
 
       <div className="grid gap-6 lg:grid-cols-[1.4fr_0.9fr]">
         <div className="glass-card p-5 sm:p-8 rounded-3xl border border-white/10">
@@ -95,12 +95,12 @@ function Profile() {
               </div>
             )}
 
-            <div className="flex-1">
-              <h2 className="text-3xl font-bold">{user.name}</h2>
+            <div className="min-w-0 flex-1">
+              <h2 className="break-words text-2xl font-bold sm:text-3xl">{user.name}</h2>
               <p className="text-blue-300 text-sm uppercase tracking-wide mb-2">
                 {user.jobTitle || "Görev tutkunu"}
               </p>
-              <p className="text-zinc-300 leading-7">{user.bio}</p>
+              <p className="break-words leading-7 text-zinc-300">{user.bio}</p>
             </div>
           </div>
 
@@ -145,12 +145,12 @@ function Profile() {
               <div className="grid gap-5">
                 <div className="grid gap-2">
                   <span className="text-zinc-400 text-sm">E-posta</span>
-                  <p className="text-white">{user.email}</p>
+                  <p className="break-words text-white">{user.email}</p>
                 </div>
 
                 <div className="grid gap-2">
                   <span className="text-zinc-400 text-sm">Telefon</span>
-                  <p className="text-white">{user.phone}</p>
+                  <p className="break-words text-white">{user.phone}</p>
                 </div>
               </div>
 
@@ -263,7 +263,7 @@ function Profile() {
 
               </div>
 
-              <div className="flex gap-4 mt-8">
+              <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:gap-4">
                 <button
                   onClick={handleSave}
                   className="flex-1 bg-green-500 hover:bg-green-600 px-6 py-3 rounded-3xl"

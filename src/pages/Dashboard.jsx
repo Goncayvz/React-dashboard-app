@@ -119,7 +119,7 @@ function Dashboard() {
   }
 
   return (
-    <div className="flex-1 px-4 py-6 sm:p-8 bg-transparent relative overflow-hidden">
+    <div className="relative flex-1 overflow-hidden bg-transparent px-4 py-6 sm:p-8">
       <div className="relative z-10">
         <Header />
 
@@ -135,7 +135,7 @@ function Dashboard() {
               placeholder="Task Title"
               value={newTitle}
               onChange={(e) => setNewTitle(e.target.value)}
-              className="flex-1 px-4 py-2 bg-zinc-800 border border-zinc-700 rounded-lg text-white"
+              className="min-w-0 flex-1 rounded-lg border border-zinc-700 bg-zinc-800 px-4 py-2 text-white"
             />
 
             <input
@@ -143,12 +143,12 @@ function Dashboard() {
               placeholder="Task Description"
               value={newDesc}
               onChange={(e) => setNewDesc(e.target.value)}
-              className="flex-1 px-4 py-2 bg-zinc-800 border border-zinc-700 rounded-lg text-white"
+              className="min-w-0 flex-1 rounded-lg border border-zinc-700 bg-zinc-800 px-4 py-2 text-white"
             />
 
             <button
               onClick={handleAddTask}
-              className="bg-blue-500 px-6 py-2 rounded-lg w-full sm:w-auto"
+              className="min-h-10 w-full rounded-lg bg-blue-500 px-6 py-2 sm:w-auto"
             >
               Add Task
             </button>
@@ -197,24 +197,24 @@ function Dashboard() {
         </div>
 
         {isEditing && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center">
-            <div className="bg-zinc-900 p-6 rounded-lg w-[92vw] max-w-md">
+          <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black/50 px-4 py-6">
+            <div className="w-full max-w-md rounded-lg border border-white/10 bg-zinc-900 p-5 sm:p-6">
               <h2 className="text-xl mb-4">Edit Task</h2>
 
               <input
-                className="w-full mb-3 p-2 bg-zinc-800"
+                className="mb-3 w-full rounded-lg border border-zinc-700 bg-zinc-800 p-3"
                 value={editTitle}
                 onChange={(e) => setEditTitle(e.target.value)}
               />
 
               <input
-                className="w-full mb-3 p-2 bg-zinc-800"
+                className="mb-3 w-full rounded-lg border border-zinc-700 bg-zinc-800 p-3"
                 value={editDesc}
                 onChange={(e) => setEditDesc(e.target.value)}
               />
 
-              <div className="flex gap-2">
-                <button onClick={updateTask} className="bg-green-500 px-4 py-2 rounded">
+              <div className="flex flex-col gap-2 sm:flex-row">
+                <button onClick={updateTask} className="w-full rounded bg-green-500 px-4 py-2 sm:w-auto">
                   Save
                 </button>
 
@@ -223,7 +223,7 @@ function Dashboard() {
                     setIsEditing(false);
                     setSelectedTask(null);
                   }}
-                  className="bg-red-500 px-4 py-2 rounded"
+                  className="w-full rounded bg-red-500 px-4 py-2 sm:w-auto"
                 >
                   Cancel
                 </button>

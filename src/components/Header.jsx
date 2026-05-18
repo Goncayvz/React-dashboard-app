@@ -1,11 +1,11 @@
 function Header(){
     return(
-        <div className="flex items-center justify-between mb-8">
-            <div>
-                <h2 className="text-3xl font-bold">
+        <div className="mb-8 flex min-w-0 items-center justify-between">
+            <div className="min-w-0">
+                <h2 className="text-2xl font-bold sm:text-3xl">
                     Dashboard
                 </h2>
-                <p className="text-zinc-400 mt-1">
+                <p className="mt-1 break-words text-sm text-zinc-400 sm:text-base">
                     Manage your tasks and productivity
                 </p>
             </div>

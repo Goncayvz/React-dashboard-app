@@ -1,21 +1,21 @@
 function TaskCard({ title, description, status, deadline, onDelete, onToggle,onEdit }){
     return(
-        <div className="glass-card p-5 rounded-3xl border border-white/10">
+        <div className="glass-card min-w-0 p-5 rounded-3xl border border-white/10">
             
-            <h3 className="text-xl font-semibold mb-2">
+            <h3 className="mb-2 break-words text-lg font-semibold sm:text-xl">
                 {title}
             </h3>
 
-            <p className="text-zinc-400 text-sm mb-4">
+            <p className="mb-4 break-words text-sm text-zinc-400">
                 {description}
             </p>
 
-            <div className="flex items-center justify-between">
-                <span className="text-xs bg-blue-500/20 text-blue-400 px-3 py-1 rounded-full">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+                <span className="rounded-full bg-blue-500/20 px-3 py-1 text-xs text-blue-400">
                     {status}
                 </span>
 
-                <span className="text-sm text-zinc-500">
+                <span className="break-words text-sm text-zinc-500">
                     {deadline}
                 </span>
             </div>
@@ -23,19 +23,19 @@ function TaskCard({ title, description, status, deadline, onDelete, onToggle,onE
             <div className="mt-4 flex flex-wrap gap-2">
                 <button
                     onClick={onToggle}
-                    className="bg-green-500 hover:bg-green-600 px-4 py-2 rounded-lg flex-1 sm:flex-none"
+                    className="min-h-10 flex-1 rounded-lg bg-green-500 px-4 py-2 text-sm hover:bg-green-600 sm:flex-none"
                 >
                 Toggle Status
                 </button>
                 <button
                     onClick={onEdit}
-                    className="bg-yellow-500 hover:bg-yellow-600 px-4 py-2 rounded-lg flex-1 sm:flex-none"
+                    className="min-h-10 flex-1 rounded-lg bg-yellow-500 px-4 py-2 text-sm hover:bg-yellow-600 sm:flex-none"
                 >
                      Edit  
                 </button>
                 <button
                     onClick={onDelete}
-                    className="bg-red-500 hover:bg-red-600 px-4 py-2 rounded-lg flex-1 sm:flex-none"
+                    className="min-h-10 flex-1 rounded-lg bg-red-500 px-4 py-2 text-sm hover:bg-red-600 sm:flex-none"
                 >
                     Delete
                 </button>

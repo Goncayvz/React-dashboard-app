@@ -41,7 +41,7 @@ function Badges() {
   return (
     <div className="px-4 py-6 sm:p-8">
       <div className="mb-8" onClick={clearNotifications}>
-        <h1 className="text-4xl font-bold mb-2">🏆 Rozetler</h1>
+        <h1 className="mb-2 text-3xl font-bold sm:text-4xl">🏆 Rozetler</h1>
         <p className="text-zinc-400">
           Kazanılan:{" "}
           <span className="text-yellow-400 font-bold">{earnedBadges.length}</span> / {BADGES.length}
@@ -51,7 +51,7 @@ function Badges() {
       {/* Kazanılan Rozetler Hızlı Gösterim */}
       {earnedBadges.length > 0 && (
         <div
-          className="bg-gradient-to-r from-yellow-900/20 to-yellow-800/20 border border-yellow-700 rounded-lg p-6 mb-8"
+          className="mb-8 rounded-lg border border-yellow-700 bg-gradient-to-r from-yellow-900/20 to-yellow-800/20 p-4 sm:p-6"
           onClick={clearNotifications}
         >
           <h2 className="text-xl font-bold text-yellow-400 mb-4">⭐ Kazanılan Rozetler</h2>
@@ -59,12 +59,12 @@ function Badges() {
             {earnedBadges.map((badge) => (
               <div
                 key={badge.id}
-                className="bg-yellow-500/10 border border-yellow-400 rounded-full px-4 py-2 flex items-center gap-2"
+                className="flex min-w-0 items-center gap-2 rounded-full border border-yellow-400 bg-yellow-500/10 px-4 py-2"
               >
                 <span className="text-2xl">{badge.icon}</span>
                 <div>
-                  <p className="font-semibold text-yellow-300">{badge.name}</p>
-                  <p className="text-xs text-yellow-200">{badge.description}</p>
+                  <p className="break-words font-semibold text-yellow-300">{badge.name}</p>
+                  <p className="break-words text-xs text-yellow-200">{badge.description}</p>
                 </div>
               </div>
             ))}
@@ -81,7 +81,7 @@ function Badges() {
           return (
             <div key={categoryKey} className="rounded-lg overflow-hidden border border-zinc-800">
               <div className={`bg-gradient-to-r ${categoryInfo.color} p-4 border-b border-zinc-700`}>
-                <h3 className="text-lg font-bold flex items-center gap-2">
+                <h3 className="flex flex-wrap items-center gap-2 text-base font-bold sm:text-lg">
                   {categoryInfo.name}
                   <span className="ml-auto text-sm bg-black/30 px-3 py-1 rounded-full">
                     {earnedInCategory.length} / {badgesInCategory.length}
@@ -89,7 +89,7 @@ function Badges() {
                 </h3>
               </div>
 
-              <div className="p-6 bg-zinc-900">
+              <div className="bg-zinc-900 p-4 sm:p-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {badgesInCategory.map((badge) => (
                     <div
@@ -106,8 +106,8 @@ function Badges() {
                         </div>
                         {isBadgeEarned(badge.id) && <div className="text-yellow-400 text-xl">✓</div>}
                       </div>
-                      <h4 className="font-bold text-white">{badge.name}</h4>
-                      <p className="text-sm text-zinc-400">{badge.description}</p>
+                      <h4 className="break-words font-bold text-white">{badge.name}</h4>
+                      <p className="break-words text-sm text-zinc-400">{badge.description}</p>
                     </div>
                   ))}
                 </div>

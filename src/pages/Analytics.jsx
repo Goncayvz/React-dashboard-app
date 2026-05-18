@@ -85,29 +85,29 @@ const lineData = days.map(day => ({
   tasks: taskByDay[day]
 }))
   return (
-    <div className="px-4 py-6 sm:p-8 text-white">
-      <h1 className="text-3xl font-bold mb-8">Analitik Paneli</h1>
+    <div className="px-4 py-6 text-white sm:p-8">
+      <h1 className="mb-8 text-2xl font-bold sm:text-3xl">Analitik Paneli</h1>
 
       {/* STATS */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         <div className="glass-card bg-gradient-to-br from-blue-900 to-blue-800 p-6 rounded-3xl border border-white/10">
           <h2 className="text-zinc-300 text-sm mb-2">Toplam Görev</h2>
-          <p className="text-4xl font-bold">{stats.totalTasks}</p>
+          <p className="text-3xl font-bold sm:text-4xl">{stats.totalTasks}</p>
         </div>
 
         <div className="glass-card bg-gradient-to-br from-green-900 to-green-800 p-6 rounded-3xl border border-white/10">
           <h2 className="text-zinc-300 text-sm mb-2">Tamamlanan</h2>
-          <p className="text-4xl font-bold">{stats.completedTasks}</p>
+          <p className="text-3xl font-bold sm:text-4xl">{stats.completedTasks}</p>
         </div>
 
         <div className="glass-card bg-gradient-to-br from-purple-900 to-purple-800 p-6 rounded-3xl border border-white/10">
           <h2 className="text-zinc-300 text-sm mb-2">Devam Ediyor</h2>
-          <p className="text-4xl font-bold">{stats.inProgressTasks}</p>
+          <p className="text-3xl font-bold sm:text-4xl">{stats.inProgressTasks}</p>
         </div>
 
         <div className={`glass-card p-6 rounded-3xl border border-white/10 bg-gradient-to-br from-yellow-900 to-yellow-800`}>
           <h2 className="text-zinc-300 text-sm mb-2">Başarı Oranı</h2>
-          <p className={`text-4xl font-bold ${getCompletionColor(stats.completionRate)}`}>
+          <p className={`text-3xl font-bold sm:text-4xl ${getCompletionColor(stats.completionRate)}`}>
             {stats.completionRate}%
           </p>
         </div>
@@ -130,16 +130,17 @@ const lineData = days.map(day => ({
       </div>
 
       {/* PIE CHART (EKLENDİ) */}
-      <div className="glass-card p-6 rounded-3xl border border-white/10 mb-8 h-80">
+      <div className="glass-card mb-8 rounded-3xl border border-white/10 p-5 sm:p-6">
         <h3 className="text-lg font-semibold mb-4">Görev Dağılımı</h3>
 
+        <div className="h-64 min-w-0 sm:h-72">
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
             <Pie
               data={chartData}
               dataKey="value"
               nameKey="name"
-              outerRadius={120}
+              outerRadius="70%"
               label
             >
               {chartData.map((_, index) => (
@@ -149,17 +150,19 @@ const lineData = days.map(day => ({
             <Tooltip />
           </PieChart>
         </ResponsiveContainer>
+        </div>
       </div>
       {/* LINE CHART (EKLENDİ) */}
-      <div className="glass-card p-6 rounded-3xl border border-white/10 mb-8 h-80">
+      <div className="glass-card mb-8 rounded-3xl border border-white/10 p-5 sm:p-6">
         <h3 className="text-lg font-semibold mb-4">
           Haftalık Görev Aktivitelesi
         </h3>
+        <div className="h-64 min-w-0 sm:h-72">
         <ResponsiveContainer width="100%" height="100%">
-          <LineChart  data={lineData}>
+          <LineChart data={lineData} margin={{ left: -20, right: 12 }}>
             <CartesianGrid strokeDasharray="3 3"/>
             <XAxis dataKey="name"/>
-            <YAxis/>
+            <YAxis allowDecimals={false}/>
             <Tooltip/>
             <Line
             type="monotone"
@@ -169,6 +172,7 @@ const lineData = days.map(day => ({
             />   
           </LineChart>
         </ResponsiveContainer>
+        </div>
       </div>
       {/* SUMMARY */}
       <div className="glass-card p-6 rounded-3xl border border-white/10">
