@@ -252,6 +252,11 @@ npm test
 
 Project is configured for production-ready builds.
 
+# 🎥 Demo Video
+
+Watch the project walkthrough on YouTube:
+
+[▶️ Watch Demo Video]:(https://youtu.be/ASDV8gDI234)
 ---
 
 # 🇹🇷 Türkçe Özet
